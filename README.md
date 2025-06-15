@@ -40,6 +40,36 @@ git config --global user.email "boudon.eloise@gmail.com"
 
 git remote add origin https://github.com/eloiseboudon/todolist.git
 
+🔄 1. Merger feature → dev
+bash# S'assurer que vous êtes sur votre branche feature et que tout est commité
+git status
+git add .
+git commit -m "feat: [description de votre feature]"
+
+### Basculer vers dev
+git checkout dev
+
+### Merger votre feature dans dev
+git merge feature/[nom-de-votre-branche]
+
+### Pusher dev avec les nouveaux changements
+git push origin dev
+🚀 2. Merger dev → main (si la feature est stable)
+bash# Basculer vers main
+git checkout main
+
+### Merger dev dans main
+git merge dev
+
+### Pusher main avec les nouveaux changements
+git push origin main
+🧹 3. Nettoyer (optionnel)
+bash# Supprimer la branche feature localement (si plus nécessaire)
+git branch -d feature/[nom-de-votre-branche]
+
+### Supprimer la branche feature sur GitHub (si elle existe)
+git push origin --delete feature/[nom-de-votre-branche]
+
 
 ### Connexion SSH :
 

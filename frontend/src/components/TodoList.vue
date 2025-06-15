@@ -8,7 +8,7 @@
       </div>
 
       <div :class="styles.mainActions">
-        <button @click="toggleAddForm" :class="styles.btnAdd">
+        <button v-if="!showAddForm" @click="showAddForm = true" :class="styles.btnAdd">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -82,24 +82,19 @@
       </div>
     </div>
 
-    <!-- Formulaire d'ajout -->
-    <div v-if="showAddForm" :class="styles.addTodoForm">
-      <input ref="todoInputRef" v-model="newTodoName" type="text" placeholder="Nom du todo..." @keyup.enter="addTodo"
-        @keydown.escape="cancelAdd" :class="styles.todoInput" />
-      <button @click="addTodo" :class="styles.btnConfirm">Ajouter</button>
-      <button @click="cancelAdd" :class="styles.btnCancel">Annuler</button>
-    </div>
+   <!-- 🎯 FORMULAIRE SIMPLE INLINE -->
+    <SimpleTodoForm 
+      v-if="showAddForm"
+      @add-todo="handleAddTodoWithPriority"
+      @cancel="cancelAddTodo"
+    />
 
-    <!-- Instructions drag & drop -->
-    <div v-if="todos.length > 1" :class="styles.dragHint">
-      💡 <strong>Astuce :</strong> Glissez-déposez les todos pour les réorganiser !
-    </div>
-
-    <!-- Liste des todos avec drag & drop -->
+    <!-- Liste des todos avec drag & drop CORRIGÉ -->
     <div v-if="todos.length > 0" :class="styles.todosContainer">
-      <div ref="sortableContainer" :class="styles.sortableList">
-        <TodoItem v-for="todo in sortedTodos" :key="todo.id" :todo="todo" :data-id="todo.id"
-          :class="styles.draggableItem" @toggle="handleToggle" @edit="handleEdit" @delete="handleDelete" />
+      <div ref="sortableContainer" :class="styles.sortableList" :key="`sortable-${todolist.id}-${todos.length}`">
+        <div v-for="todo in sortedTodos" :key="`todo-${todo.id}`" :data-id="todo.id" class="draggable-item">
+          <TodoItem :todo="todo" @toggle="handleToggle" @edit="handleEdit" @delete="handleDelete" />
+        </div>
       </div>
     </div>
 
@@ -120,18 +115,21 @@ import { useNotifications } from '@/composables/useNotifications';
 import styles from '@/styles/components/TodoList.module.css';
 import { useTodos } from '@/composables/useTodos';
 import type { ExportOptions } from '@/types';
+import SimpleTodoForm from './SimpleTodoForm.vue';
+import type { Todo, TodoList } from '@/services/api';
 
-interface Todo {
-  id: number;
-  name: string;
-  completed: boolean;
-  priority: number;
-}
 
-interface TodoList {
-  id: number;
-  name: string;
-}
+// interface Todo {
+//   id: number;
+//   name: string;
+//   completed: boolean;
+//   priority: number;
+// }
+
+// interface TodoList {
+//   id: number;
+//   name: string;
+// }
 
 interface Props {
   todolist: TodoList;
@@ -139,7 +137,7 @@ interface Props {
 }
 
 interface Emits {
-  addTodo: [name: string];
+  addTodo: [name: string, priority?: number];
   toggleTodo: [id: number];
   editTodo: [todo: Todo];
   deleteTodo: [id: number];
@@ -483,6 +481,22 @@ const handleReorder = async (oldIndex: number, newIndex: number) => {
     currentlyModifying.value = null;
   }
 };
+const showAddTodoForm = () => {
+  showAddForm.value = true;
+};
+
+const cancelAddTodo = () => {
+  showAddForm.value = false;
+};
+
+const handleAddTodoWithPriority = (name: string, priority?: number) => {
+  // Émettre l'événement vers le parent avec la priorité
+  emit('addTodo', name, priority);
+
+  // Fermer le formulaire
+  showAddForm.value = false;
+};
+
 
 // 🛡️ GESTIONNAIRES D'ÉVÉNEMENTS AVEC PRÉSERVATION DU SCROLL
 const handleToggle = async (id: number) => {

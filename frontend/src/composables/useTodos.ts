@@ -3,7 +3,7 @@ import {
   todoListsApi, todosApi, apiUtils,
   type Todo,
   type TodoList,
-  // type CreateTodoRequest, 
+  type CreateTodoRequest,
   type UpdateTodoRequest
 } from '../services/api';
 import { useNotifications } from './useNotifications';
@@ -452,45 +452,49 @@ export function useTodos() {
     }
   };
 
-const deleteTodo = async (id: number) => {
-  await preserveScrollPosition(async () => {
-    loading.value = true;
-    error.value = null;
+  const deleteTodo = async (id: number) => {
+    await preserveScrollPosition(async () => {
+      loading.value = true;
+      error.value = null;
 
-    // Récupérer le nom avant suppression pour la notification
-    const todoToDelete = currentTodos.value.find(t => t.id === id);
-    const todoName = todoToDelete?.name || 'Todo';
+      // Récupérer le nom avant suppression pour la notification
+      const todoToDelete = currentTodos.value.find(t => t.id === id);
+      const todoName = todoToDelete?.name || 'Todo';
 
-    try {
-      await todosApi.delete(id);
-      
-      // 🎯 CORRECTION : Recharger toute la TodoList pour avoir les priorités à jour
-      if (currentTodolist.value) {
-        await loadTodoList(currentTodolist.value.id);
+      try {
+        await todosApi.delete(id);
+
+        // 🎯 CORRECTION : Recharger toute la TodoList pour avoir les priorités à jour
+        if (currentTodolist.value) {
+          await loadTodoList(currentTodolist.value.id);
+        }
+
+        todoDeleted(todoName);
+      } catch (err) {
+        const errorMessage = apiUtils.handleError(err);
+        error.value = errorMessage;
+        apiError(errorMessage);
+        console.error('Erreur lors de la suppression du todo:', err);
+        throw err;
+      } finally {
+        loading.value = false;
       }
-      
-      todoDeleted(todoName);
-    } catch (err) {
-      const errorMessage = apiUtils.handleError(err);
-      error.value = errorMessage;
-      apiError(errorMessage);
-      console.error('Erreur lors de la suppression du todo:', err);
-      throw err;
-    } finally {
-      loading.value = false;
-    }
-  });
-};
+    });
+  };
 
   // Actions pour les Todos
-  const addTodo = async (todolistId: number, name: string) => {
+  const addTodo = async (todolistId: number, name: string, priority?: number) => {
     await preserveScrollPosition(async () => {
 
       loading.value = true;
       error.value = null;
 
       try {
-        const newTodo = await todoListsApi.addTodo(todolistId, { name });
+        const todoData: CreateTodoRequest = { name };
+        if (priority !== undefined && priority > 0) {
+          todoData.priority = priority;
+        }
+        const newTodo = await todoListsApi.addTodo(todolistId, todoData);
 
         if (currentTodolist.value) {
           await loadTodoList(currentTodolist.value.id);

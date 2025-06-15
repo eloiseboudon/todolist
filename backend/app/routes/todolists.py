@@ -16,13 +16,15 @@ def recalculate_priorities(db: Session, todolist_id: int):
     active_todos = db.query(models.Todo).filter(
         models.Todo.todolist_id == todolist_id,
         models.Todo.completed == False
-    ).order_by(models.Todo.priority.asc()).all()
+    ).order_by(models.Todo.priority.asc(),
+            models.Todo.created_at.desc()).all()
     
     # Récupérer tous les todos terminés triés par priorité
     completed_todos = db.query(models.Todo).filter(
         models.Todo.todolist_id == todolist_id,
         models.Todo.completed == True
-    ).order_by(models.Todo.priority.asc()).all()
+    ).order_by(models.Todo.priority.asc(),
+            models.Todo.created_at.desc()).all()
     
     # Renuméroter les todos actifs : 1, 2, 3...
     for index, todo in enumerate(active_todos, 1):
@@ -141,9 +143,12 @@ def add_todo_to_list(todolist_id: int, todo: TodoCreate, db: Session = Depends(g
         )
     
     try:
-        # 🎯 SUPER SIMPLE : Assigner une priorité temporaire élevée
-        temp_priority = 9999
-        
+        # Si priorité fournie on l'applique, sinon la todo sera la dernère de la liste, recalculate_priorities() rénumérotera
+        if todo.priority is not None and todo.priority > 0:
+            temp_priority = todo.priority
+        else :
+            temp_priority = 9999
+                   
         # Créer la todo avec une priorité temporaire
         db_todo = models.Todo(
             name=todo.name,
@@ -155,7 +160,6 @@ def add_todo_to_list(todolist_id: int, todo: TodoCreate, db: Session = Depends(g
         db.add(db_todo)
         db.commit()
         
-        # 🎯 Laisser recalculate_priorities faire tout le travail
         recalculate_priorities(db, todolist_id)
         
         db.refresh(db_todo)

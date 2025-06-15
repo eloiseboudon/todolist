@@ -2,7 +2,7 @@
 
 ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![PostGre](https://img.shields.io/badge/Postgre-EC4899?style=for-the-badge&logo=postgre&logoColor=white)
+![PostGre](https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-En%20développement-orange?style=for-the-badge)
 
 **TaskFlow** est une application de gestion de tâches moderne et intuitive, construite avec une architecture full-stack robuste. L'application combine un frontend Vue.js réactif avec un backend Python performant pour offrir une expérience utilisateur fluide et professionnelle.
@@ -27,12 +27,15 @@
 - [ ] **Import des données**
 
 ## 🚀 Run
+```
 cd /Users/eloise/Developpements/todolist-v2/backend
 cd /Users/eloise/Developpements/todolist-v2/frontend
+```
 Check Makefile to run local servers
 
 
 ## Git
+```
 git init
 
 git config --global user.name "eloiseboudon"
@@ -40,40 +43,62 @@ git config --global user.email "boudon.eloise@gmail.com"
 
 git remote add origin https://github.com/eloiseboudon/todolist.git
 
-🔄 1. Merger feature → dev
+git branch feature/new-feature
+```
+
+### 🔄 1. Merger feature → dev
 bash# S'assurer que vous êtes sur votre branche feature et que tout est commité
+```
 git status
 git add .
 git commit -m "feat: [description de votre feature]"
-
-### Basculer vers dev
+```
+#### Basculer vers dev
+```
 git checkout dev
+```
 
-### Merger votre feature dans dev
+#### Merger votre feature dans dev
+```
 git merge feature/[nom-de-votre-branche]
+```
 
-### Pusher dev avec les nouveaux changements
+#### Pusher dev avec les nouveaux changements
+```
 git push origin dev
-🚀 2. Merger dev → main (si la feature est stable)
+```
+
+### 🚀 2. Merger dev → main (si la feature est stable)
 bash# Basculer vers main
+```
 git checkout main
+```
 
-### Merger dev dans main
+#### Merger dev dans main
+```
 git merge dev
+```
 
-### Pusher main avec les nouveaux changements
+#### Pusher main avec les nouveaux changements
+```
 git push origin main
-🧹 3. Nettoyer (optionnel)
+```
+
+### 🧹 3. Nettoyer (optionnel)
 bash# Supprimer la branche feature localement (si plus nécessaire)
+```
 git branch -d feature/[nom-de-votre-branche]
+```
 
-### Supprimer la branche feature sur GitHub (si elle existe)
+#### Supprimer la branche feature sur GitHub (si elle existe)
+```
 git push origin --delete feature/[nom-de-votre-branche]
-
+```
 
 ### Connexion SSH :
-
+```
 git remote set-url origin git@github.com:eloiseboudon/todolist.git
+```
 
 ### Puis configurer une clé SSH si pas encore fait
 ssh-keygen -t ed25519 -C "boudon.eloise@gmail.com"

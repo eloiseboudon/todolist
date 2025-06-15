@@ -17,6 +17,8 @@ See [Vite Configuration Reference](https://vite.dev/config/).
 ## SVG link
 See [heroicons](https://heroicons.com/)
 
+## Emoticon 
+See [emoticon] (https://www.smspartner.fr/blog/liste-complete-des-emoticones-a-copier-coller/)
 
 ## Project Setup
 

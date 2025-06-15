@@ -14,7 +14,7 @@
 - ✅ **Suivi de progression** - Marquer les tâches comme terminées
 - 🎨 **Interface moderne** - Design system cohérent avec animations fluides
 - 📱 **Responsive** - Compatible desktop, tablette et mobile
-- 📤 **Export/Import des données**
+- 📤 **Export des données**
 
 ## 🔮 Roadmap
 
@@ -24,6 +24,7 @@
 - [ ] **Notifications**
 - [ ] **Mode sombre**
 - [ ] **API mobile**
+- [ ] **Import des données**
 
 ## 🚀 Run
 cd /Users/eloise/Developpements/todolist-v2/backend

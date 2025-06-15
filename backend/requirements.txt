@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+SQLAlchemy
+psycopg[binary]
+psycopg2-binary
+python-dotenv
+alembic>=1.13.0
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+httpx>=0.24.0
+pytest-cov>=4.1.0
+pytest-watch>=4.2.0

@@ -1,0 +1,19 @@
+/* TodoListDetail.module.css */
+.backButton {
+  margin-bottom: var(--spacing-lg);
+}
+
+.btnBack {
+  color: var(--text-secondary) !important;
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-fast);
+  display: flex;
+}
+
+.btnBack svg {
+  margin-right: var(--spacing-xs);
+}
+
+.btnBack:hover {
+  color: var(--primary-color) !important;
+}

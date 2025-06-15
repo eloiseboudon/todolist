@@ -1,0 +1,530 @@
+/* TodoList.module.css - Version avec variables */
+
+.todoList {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+/* ===== EN-TÊTE AMÉLIORÉ ===== */
+.todoListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-hover) 100%);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.titleSection h2 {
+  color: var(--text-primary);
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.todoCount {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.mainActions {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+/* ===== BOUTONS PRINCIPAUX ===== */
+.btnAdd {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: var(--text-white);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
+
+.btnAdd:hover {
+  background: linear-gradient(135deg, var(--primary-hover) 0%, #3730a3 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+.btnAdd:active {
+  transform: translateY(0);
+}
+
+/* ===== MENU D'EXPORT DROPDOWN ===== */
+.exportDropdown {
+  position: relative;
+}
+
+.btnExport {
+  background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+  color: var(--text-white);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--success-color) 20%, transparent);
+  min-width: 120px;
+  justify-content: center;
+}
+
+.btnExportMain {
+  justify-content: space-between;
+  padding-right: var(--spacing-md);
+}
+
+.btnExport:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px color-mix(in srgb, var(--success-color) 30%, transparent);
+}
+
+.btnExport:disabled {
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-hover) 100%);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.dropdownIcon {
+  font-size: var(--font-size-xs);
+  transition: transform var(--transition-fast);
+  margin-left: var(--spacing-xs);
+}
+
+.dropdownOpen {
+  transform: rotate(180deg);
+}
+
+/* ===== MENU DROPDOWN ===== */
+.exportMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--spacing-sm);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  min-width: 200px;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.exportMenuItem {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-md);
+  text-align: left;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.exportMenuItem:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.exportMenuItem:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.exportMenuItem:not(:last-child) {
+  border-bottom: 1px solid var(--bg-hover);
+}
+
+/* ===== FORMULAIRE D'AJOUT ===== */
+.addTodoForm {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, #fef7ff 0%, #faf5ff 100%);
+  border: 1px solid #e9d5ff;
+  border-radius: var(--radius-xl);
+  animation: formSlideIn var(--transition-normal) ease-out;
+}
+
+@keyframes formSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.todoInput {
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  background: var(--bg-primary);
+}
+
+.todoInput:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 10%, transparent);
+}
+
+.btnConfirm {
+  background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+  color: var(--text-white);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--success-color) 20%, transparent);
+}
+
+.btnConfirm:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px color-mix(in srgb, var(--success-color) 30%, transparent);
+}
+
+.btnCancel {
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-hover) 100%);
+  color: var(--text-white);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--secondary-color) 20%, transparent);
+}
+
+.btnCancel:hover {
+  background: linear-gradient(135deg, var(--secondary-hover) 0%, #374151 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px color-mix(in srgb, var(--secondary-color) 30%, transparent);
+}
+
+/* ===== HINT DRAG & DROP ===== */
+.dragHint {
+  background: linear-gradient(135deg, var(--primary-light) 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  color: #1e40af;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* ===== CONTENEUR TODOS ===== */
+.todosContainer {
+  margin-top: var(--spacing-md);
+  transition: opacity var(--transition-fast);
+}
+
+.sortableList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  transition: all var(--transition-fast);
+}
+
+.draggableItem {
+  cursor: grab;
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeInSlide var(--transition-normal) ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.draggableItem:hover:not(.updating) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-fast);
+}
+
+.draggableItem:active {
+  cursor: grabbing;
+  transform: scale(1.02);
+  transition: transform 0.1s ease;
+}
+
+/* ===== CLASSES SORTABLE.JS ===== */
+.sortableGhost {
+  opacity: 0.5;
+  background: linear-gradient(135deg, var(--bg-hover) 0%, var(--border-color) 100%);
+  border: 2px dashed var(--text-muted);
+  transform: scale(0.98);
+}
+
+.sortableChosen {
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.02);
+  z-index: 999;
+}
+
+.sortableDrag {
+  transform: rotate(3deg) scale(1.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0.9;
+}
+
+/* ===== ANIMATIONS D'ÉTATS ===== */
+.draggableItem.leaving {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all var(--transition-fast);
+}
+
+.draggableItem.updating {
+  opacity: 0.7;
+  transform: scale(0.98);
+  transition: all var(--transition-fast);
+}
+
+.draggableItem.modified {
+  animation: modificationPulse 0.6s ease-out;
+}
+
+@keyframes modificationPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 40%, transparent);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary-color) 10%, transparent);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 0%, transparent);
+  }
+}
+
+/* ===== SKELETON LOADING ===== */
+.todoSkeleton {
+  height: 60px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.todosContainer.updating {
+  position: relative;
+}
+
+.todosContainer.updating::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 1;
+  opacity: 0;
+  animation: fadeInOverlay var(--transition-fast) forwards;
+}
+
+@keyframes fadeInOverlay {
+  to { opacity: 1; }
+}
+
+/* ===== ÉTAT VIDE ===== */
+.emptyState {
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  color: var(--text-secondary);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-hover) 100%);
+  border-radius: var(--radius-xl);
+  border: 2px dashed var(--border-hover);
+}
+
+.emptyIcon {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.7;
+  animation: emptyBounce 3s ease-in-out infinite;
+}
+
+@keyframes emptyBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.emptyState p:first-of-type {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-primary);
+}
+
+.emptyState p:last-of-type {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .todoList {
+    padding: var(--spacing-md);
+  }
+
+  .todoListHeader {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .mainActions {
+    justify-content: center;
+  }
+
+  .addTodoForm {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .btnConfirm, .btnCancel {
+    width: 100%;
+  }
+
+  .dragHint {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-sm);
+  }
+
+  .exportMenu {
+    right: auto;
+    left: 0;
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .titleSection h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .btnAdd, .btnExport {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-xs);
+  }
+
+  .exportMenuItem {
+    padding: var(--spacing-sm) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ===== ANIMATIONS D'ENTRÉE ===== */
+.todoList {
+  animation: listFadeIn var(--transition-slow) ease-out;
+}
+
+@keyframes listFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== FOCUS STATES AMÉLIORÉS ===== */
+.btnAdd:focus,
+.btnExport:focus,
+.btnConfirm:focus,
+.btnCancel:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+.exportMenuItem:focus {
+  outline: none;
+  background: var(--bg-hover);
+}

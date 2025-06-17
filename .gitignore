@@ -39,7 +39,10 @@ backend/__pycache__/
 backend/*.py[cod]
 backend/*$py.class
 backend/*.so
-backend/**/__pycache__/
+backend/app/__pycache__/
+backend/app/routes/__pycache__/
+backend/app/db/__pycache__
+backend/migrations/versions/__pycache__/
 
 # Virtual environments
 backend/venv/

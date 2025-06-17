@@ -35,29 +35,27 @@
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
+                  d="M9 12h3.75M9 15h3.75M9 18h3.75m3-7.036A11.959 11.959 0 0 1 3.75 12M3.75 12A11.959 11.959 0 0 1 15.75 4.5h.75m0 0v4.5m0-4.5h-4.5" />
               </svg>
               Export complet
             </button>
 
-            <button @click="handleExport('pending')" :class="styles.exportMenuItem"
-              :disabled="todos.filter(t => !t.completed).length === 0">
+            <button @click="handleExport('pending')" :class="styles.exportMenuItem">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
-              Todos en cours
+              Tâches en cours
             </button>
 
-            <button @click="handleExport('completed')" :class="styles.exportMenuItem"
-              :disabled="todos.filter(t => t.completed).length === 0">
+            <button @click="handleExport('completed')" :class="styles.exportMenuItem">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
-              Todos terminés
+              Tâches terminées
             </button>
 
             <button @click="handleExport('alphabetical')" :class="styles.exportMenuItem">
@@ -83,70 +81,35 @@
       </div>
     </div>
 
-    <!-- 🎯 NOUVEAU : Formulaire simple avec priorité -->
-    <div v-if="showAddForm" :class="styles.addTodoForm">
-      <div :class="styles.formRow">
-        <!-- Champ nom principal -->
-        <input 
-          ref="todoInputRef" 
-          v-model="newTodoName" 
-          type="text" 
-          placeholder="Nom de la tâche..." 
-          :class="styles.todoInput" 
-          @keydown.enter="addTodo"
-          @keydown.escape="cancelAdd" 
-          maxlength="200"
-          required
-        />
-        
-        <!-- Champ priorité compact -->
-        <input
-          v-model.number="customPriority"
-          type="number"
-          min="1"
-          max="999"
-          placeholder="Priorité"
-          :class="styles.priorityInput"
-          title="Priorité optionnelle (ex: 1 = urgent)"
-          @keydown.enter="addTodo"
-          @keydown.escape="cancelAdd"
-        />
-        
-        <!-- Boutons d'action -->
-        <button 
-          @click="addTodo" 
-          :disabled="!newTodoName.trim()"
-          :class="styles.btnConfirm"
-          title="Ajouter la tâche"
-        >
-          ✓
-        </button>
-        
-        <button 
-          @click="cancelAdd" 
-          :class="styles.btnCancel"
-          title="Annuler"
-        >
-          ✕
-        </button>
-      </div>
-      
-      <!-- Aide discrète -->
-      <div :class="styles.formHint">
-        💡 <strong>Astuce :</strong> Laissez la priorité vide pour ajouter en fin de liste, ou indiquez un chiffre (1 = urgent).
-      </div>
-    </div>
+    <!-- 🎯 NOUVEAU : Utilisation du composant SimpleTodoForm amélioré -->
+    <SimpleTodoForm 
+      v-if="showAddForm"
+      @add-todo="handleAddTodoWithPriority"
+      @cancel="cancelAddTodo"
+    />
 
     <!-- Instructions drag & drop -->
     <div v-if="todos.length > 1" :class="styles.dragHint">
       💡 <strong>Astuce :</strong> Glissez-déposez les todos pour les réorganiser !
     </div>
 
-    <!-- Liste des todos avec drag & drop -->
+    <!-- 🎯 CORRIGÉ : Liste des todos avec drag & drop -->
     <div v-if="todos.length > 0" :class="styles.todosContainer">
       <div ref="sortableContainer" :class="styles.sortableList">
-        <TodoItem v-for="todo in sortedTodos" :key="todo.id" :todo="todo" :data-id="todo.id"
-          :class="styles.draggableItem" @toggle="handleToggle" @edit="handleEdit" @delete="handleDelete" />
+        <!-- 🎯 CORRECTION : Structure simplifiée pour le drag and drop -->
+        <div 
+          v-for="todo in sortedTodos" 
+          :key="`todo-${todo.id}`" 
+          :data-id="todo.id" 
+          :class="styles.draggableItem"
+        >
+          <TodoItem 
+            :todo="todo" 
+            @toggle="handleToggle" 
+            @edit="handleEdit" 
+            @delete="handleDelete" 
+          />
+        </div>
       </div>
     </div>
 
@@ -163,11 +126,11 @@
 import { ref, computed, onMounted, onBeforeUnmount, onUpdated, nextTick, watch } from 'vue';
 import Sortable from 'sortablejs';
 import TodoItem from './TodoItem.vue';
+import SimpleTodoForm from './SimpleTodoForm.vue';
 import { useNotifications } from '@/composables/useNotifications';
 import styles from '@/styles/components/TodoList.module.css';
 import { useTodos } from '@/composables/useTodos';
 import type { ExportOptions } from '@/types';
-// 🎯 CORRECTION : Utiliser les types de l'API au lieu d'interfaces locales
 import type { Todo, TodoList } from '@/services/api';
 
 interface Props {
@@ -176,7 +139,7 @@ interface Props {
 }
 
 interface Emits {
-  addTodo: [name: string, priority?: number]; // 🎯 AJOUTÉ : Support de la priorité
+  addTodo: [name: string, priority?: number];
   toggleTodo: [id: number];
   editTodo: [todo: Todo];
   deleteTodo: [id: number];
@@ -186,86 +149,49 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-// Notifications
-const { saving, todoSaved, apiError } = useNotifications();
-
-// Refs
-const sortableContainer = ref<HTMLElement>();
-const todoInputRef = ref<HTMLInputElement>();
-let sortableInstance: Sortable | null = null;
-
 // État local
 const showAddForm = ref(false);
-const newTodoName = ref('');
-const customPriority = ref<number | null>(null); // 🎯 NOUVEAU : Priorité personnalisée
 const showExportMenu = ref(false);
+const sortableContainer = ref<HTMLElement>();
+let sortableInstance: Sortable | null = null;
 
-// 🎯 GESTION DU SCROLL - Refs existants
-const lastScrollPosition = ref(0);
+// Notifications
+const { 
+  saving, 
+  todoSaved, 
+  todoAdded, 
+  todoDeleted, 
+  apiError,
+  todolistDeleted 
+} = useNotifications();
+
+// État pour la gestion du scroll
 const currentlyModifying = ref<number | null>(null);
 const shouldPreserveScroll = ref(false);
 
-// Export functions
-const { downloadTodoListWithOptions, exportPresets } = useTodos();
-
-// 🎯 FONCTIONS DE GESTION DU SCROLL
+// Fonctions de gestion du scroll
 const saveScrollPosition = () => {
-  lastScrollPosition.value = window.pageYOffset || document.documentElement.scrollTop;
-};
-
-const restoreScrollPosition = () => {
-  if (lastScrollPosition.value > 0) {
-    setTimeout(() => {
-      window.scrollTo({
-        top: lastScrollPosition.value,
-        behavior: 'instant'
-      });
-    }, 150);
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem('scrollPosition', window.pageYOffset.toString());
   }
 };
 
-const scrollToTodo = (todoId: number, behavior: 'smooth' | 'instant' = 'smooth') => {
-  setTimeout(() => {
-    const todoElement = document.querySelector(`[data-id="${todoId}"]`);
-    if (todoElement) {
-      todoElement.scrollIntoView({
-        behavior,
-        block: 'center', // Centrer l'élément dans la vue
-        inline: 'nearest'
-      });
-    } else {
-      console.warn(`⚠️ Élément todo ${todoId} non trouvé pour scroll`);
+const restoreScrollPosition = () => {
+  if (typeof window !== 'undefined') {
+    const position = sessionStorage.getItem('scrollPosition');
+    if (position) {
+      window.scrollTo(0, parseInt(position));
+      sessionStorage.removeItem('scrollPosition');
     }
-  }, 200);
+  }
 };
 
-const withScrollPreservation = async (todoId: number | null, operation: () => Promise<void>) => {
-  try {
-    // Sauvegarder la position
-    if (!todoId) {
-      saveScrollPosition();
-      shouldPreserveScroll.value = true;
-    } else {
-      currentlyModifying.value = todoId;
-      shouldPreserveScroll.value = false;
+const scrollToTodo = (todoId: number, behavior: ScrollBehavior = 'smooth') => {
+  if (typeof window !== 'undefined') {
+    const element = document.querySelector(`[data-id="${todoId}"]`);
+    if (element) {
+      element.scrollIntoView({ behavior, block: 'center' });
     }
-
-    // Exécuter l'opération
-    await operation();
-
-    // Attendre que l'opération parent se termine
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    // Restaurer position ou scroller vers l'élément
-    if (todoId && currentlyModifying.value === todoId) {
-      scrollToTodo(todoId, 'instant');
-    } else if (shouldPreserveScroll.value) {
-      restoreScrollPosition();
-    }
-
-  } finally {
-    currentlyModifying.value = null;
-    shouldPreserveScroll.value = false;
   }
 };
 
@@ -278,13 +204,11 @@ const sortedTodos = computed(() => {
 const destroySortableInstance = () => {
   if (sortableInstance) {
     try {
-      // Vérifier que l'élément existe encore avant de détruire
       if (sortableContainer.value && sortableInstance.el) {
         sortableInstance.destroy();
-      } else {
-        console.log('🧹 Sortable déjà détruit ou élément absent');
       }
-    } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
+      console.log('🧹 Sortable détruit');
+    } catch (error) {
       console.warn('⚠️ Erreur lors de la destruction de Sortable:', error);
     } finally {
       sortableInstance = null;
@@ -292,90 +216,101 @@ const destroySortableInstance = () => {
   }
 };
 
-// 🛡️ FONCTION D'INITIALISATION SÉCURISÉE
+// 🛡️ FONCTION D'INITIALISATION CORRIGÉE
 const initializeSortable = () => {
-  // Détruire l'instance précédente de manière sécurisée
+  // Détruire l'instance précédente
   destroySortableInstance();
 
-  // Vérifier que l'élément existe et qu'il y a assez de todos
+  // Vérifier les conditions
   if (!sortableContainer.value || props.todos.length <= 1) {
-    console.log('🚫 Pas assez de todos pour Sortable ou élément manquant');
+    console.log('🚫 Conditions non remplies pour Sortable');
     return;
   }
 
   try {
-    // Créer une nouvelle instance
+    console.log('🎯 Initialisation de Sortable...');
+    
+    // 🎯 CORRECTION : Configuration simplifiée et corrigée
     sortableInstance = new Sortable(sortableContainer.value, {
       animation: 200,
       ghostClass: styles.sortableGhost,
       chosenClass: styles.sortableChosen,
       dragClass: styles.sortableDrag,
-
-      // Gérer le déplacement
-      onEnd: async (evt) => {
-        const { oldIndex, newIndex } = evt;
-
-        if (oldIndex === newIndex || oldIndex === undefined || newIndex === undefined) {
-          return;
-        }
-
-        await handleReorder(oldIndex, newIndex);
-      },
-
-      // Personnalisation
-      handle: `.${styles.draggableItem}`,
+      
+      // 🎯 CORRECTION : Supprimer ou corriger le handle
+      // handle: `.${styles.draggableItem}`, // ❌ Peut causer des problèmes
+      // Soit on l'enlève complètement, soit on utilise un selector plus spécifique
+      
+      // Options de scroll
       scroll: true,
       scrollSensitivity: 100,
       scrollSpeed: 20,
+      
+      // Gestionnaire principal
+      onEnd: async (evt) => {
+        try {
+          console.log('🔄 Drag end event:', evt);
+          const { oldIndex, newIndex } = evt;
+
+          if (oldIndex === newIndex || oldIndex === undefined || newIndex === undefined) {
+            console.log('🚫 Pas de changement d\'ordre');
+            return;
+          }
+
+          console.log(`🎯 Réorganisation: ${oldIndex} → ${newIndex}`);
+          await handleReorder(oldIndex, newIndex);
+        } catch (error) {
+          console.error('❌ Erreur lors du réordonnement:', error);
+        }
+      },
+      
+      // Événements de debug
+      onStart: (evt) => {
+        console.log('🎯 Début du drag:', evt.oldIndex);
+      },
+      
+      onMove: (evt) => {
+        // Optionnel : log des mouvements
+        return true; // Autoriser le mouvement
+      }
     });
 
-  } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
+    console.log('✅ Sortable initialisé avec succès');
+  } catch (error) {
     console.error('❌ Erreur lors de la création de Sortable:', error);
     sortableInstance = null;
   }
 };
 
-// 🎯 WATCHERS POUR RÉINITIALISER SORTABLE ET GÉRER LE SCROLL
-watch(() => props.todos.length, (newLength, oldLength) => {
-  // Réinitialiser Sortable seulement si nécessaire
+// 🎯 WATCHERS POUR RÉINITIALISER SORTABLE
+watch(() => props.todos.length, (newLength) => {
+  console.log(`📊 Changement nombre de todos: ${newLength}`);
   nextTick(() => {
     if (newLength > 1 && !sortableInstance) {
+      console.log('🔄 Réinitialisation de Sortable (ajout)');
       initializeSortable();
     } else if (newLength <= 1 && sortableInstance) {
+      console.log('🧹 Destruction de Sortable (suppression)');
       destroySortableInstance();
     }
   });
 });
 
-// 🎯 WATCHER POUR DÉTECTER LES MODIFICATIONS ET GÉRER LE SCROLL
-watch(() => props.todos, (newTodos, oldTodos) => {
-  if (oldTodos && currentlyModifying.value) {
-    // Une todo spécifique est en cours de modification
-    const modifiedTodo = newTodos.find(t => t.id === currentlyModifying.value);
-    if (modifiedTodo) {
-      scrollToTodo(currentlyModifying.value, 'instant');
-    }
-  } else if (oldTodos && shouldPreserveScroll.value) {
-    // Préserver la position de scroll pour les autres opérations
-    restoreScrollPosition();
-  }
-}, { deep: true, flush: 'post' });
-
-// 🎯 Toggle export menu
+// 🎯 Gestionnaires d'événements du menu
 const toggleExportMenu = () => {
   showExportMenu.value = !showExportMenu.value;
 };
 
-// 🎯 Fermer le menu d'export au clic extérieur
 const closeExportMenu = () => {
   showExportMenu.value = false;
 };
 
-// 🎯 Gestionnaire d'export unifié
+// 🎯 Gestionnaire d'export
 const handleExport = async (type: string) => {
   closeExportMenu();
-
   try {
+    const { exportTodoListWithOptions, downloadTodoListWithOptions, exportPresets } = useTodos();
+    
     switch (type) {
       case 'all':
         await exportPresets.all(props.todolist, props.todos);
@@ -393,14 +328,14 @@ const handleExport = async (type: string) => {
         await exportWithOptions();
         break;
     }
-  } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
+  } catch (error) {
     console.error('Erreur export:', error);
     apiError('Erreur lors de l\'export');
   }
 };
 
-// 🎯 Export avec options personnalisées
 const exportWithOptions = async () => {
+  const { downloadTodoListWithOptions } = useTodos();
   const options: ExportOptions = {
     includeMetadata: true,
     includeCompleted: true,
@@ -408,89 +343,35 @@ const exportWithOptions = async () => {
     sortBy: 'name',
     format: 'pretty'
   };
-
   await downloadTodoListWithOptions(props.todolist, props.todos, options);
 };
 
-// 🎯 Fonction pour afficher le formulaire et focus l'input
-const toggleAddForm = async () => {
+// 🎯 Gestion du formulaire
+const toggleAddForm = () => {
   showAddForm.value = !showAddForm.value;
-
   if (showAddForm.value) {
-    // Fermer le menu d'export s'il est ouvert
     closeExportMenu();
-
-    // Attendre que le DOM soit mis à jour
-    await nextTick();
-    // Mettre le focus sur l'input
-    todoInputRef.value?.focus();
-  } else {
-    // Réinitialiser les champs si on ferme le formulaire
-    newTodoName.value = '';
-    customPriority.value = null; // 🎯 NOUVEAU : Reset priorité
   }
 };
 
-// 🎯 NOUVEAU : Ajouter un todo avec priorité optionnelle
-const addTodo = async () => {
-  const todoName = newTodoName.value.trim();
-
-  if (!todoName) {
-    // Si vide, juste remettre le focus
-    todoInputRef.value?.focus();
-    return;
-  }
-
-  try {
-    // Sauvegarder la position de scroll avant ajout
-    saveScrollPosition();
-    shouldPreserveScroll.value = true;
-
-    // 🎯 NOUVEAU : Récupérer la priorité personnalisée
-    const priority = customPriority.value && customPriority.value > 0 ? customPriority.value : undefined;
-
-    console.log('📝 [TodoList] Ajout todo avec priorité:', { name: todoName, priority });
-
-    // Émettre l'événement vers le parent avec la priorité
-    emit('addTodo', todoName, priority);
-
-    // Réinitialiser et garder le focus pour ajouter rapidement
-    newTodoName.value = '';
-    customPriority.value = null; // 🎯 NOUVEAU : Reset priorité
-    await nextTick();
-    todoInputRef.value?.focus();
-
-    // Réinitialiser Sortable après ajout avec sécurité
-    await nextTick();
-    if (sortableContainer.value) {
-      initializeSortable();
-    }
-
-  } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
-    console.error('Erreur ajout todo:', error);
-    // Remettre le focus même en cas d'erreur
-    await nextTick();
-    todoInputRef.value?.focus();
-  }
-};
-
-// 🎯 Annuler l'ajout
-const cancelAdd = () => {
+const cancelAddTodo = () => {
   showAddForm.value = false;
-  newTodoName.value = '';
-  customPriority.value = null; // 🎯 NOUVEAU : Reset priorité
 };
 
-// Gérer la réorganisation avec préservation du scroll
+const handleAddTodoWithPriority = (name: string, priority?: number) => {
+  console.log('📝 [TodoList] Ajout todo:', { name, priority });
+  emit('addTodo', name, priority);
+  showAddForm.value = false;
+};
+
+// 🎯 Gestionnaire de réorganisation
 const handleReorder = async (oldIndex: number, newIndex: number) => {
-  // Identifier la todo qui a été déplacée
   const movedTodo = sortedTodos.value[oldIndex];
   if (movedTodo) {
     currentlyModifying.value = movedTodo.id;
-    console.log(`🔀 Réorganisation: todo ${movedTodo.id} de ${oldIndex} vers ${newIndex}`);
+    console.log(`🔀 Todo déplacée: ${movedTodo.name} (${oldIndex} → ${newIndex})`);
   }
 
-  // Afficher notification de sauvegarde
   const savingId = saving();
 
   try {
@@ -499,8 +380,9 @@ const handleReorder = async (oldIndex: number, newIndex: number) => {
     const [movedTodoItem] = reorderedTodos.splice(oldIndex, 1);
     reorderedTodos.splice(newIndex, 0, movedTodoItem);
 
-    // Extraire les IDs dans le bon ordre
+    // Extraire les IDs
     const newOrder = reorderedTodos.map(todo => todo.id);
+    console.log('📋 Nouvel ordre:', newOrder);
 
     // Émettre l'événement
     emit('reorderTodos', newOrder);
@@ -510,7 +392,7 @@ const handleReorder = async (oldIndex: number, newIndex: number) => {
       todoSaved();
     }, 500);
 
-    // Scroller vers la todo déplacée après un délai
+    // Scroller vers la todo déplacée
     if (movedTodo) {
       setTimeout(() => {
         scrollToTodo(movedTodo.id, 'smooth');
@@ -518,53 +400,38 @@ const handleReorder = async (oldIndex: number, newIndex: number) => {
       }, 600);
     }
 
-  } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
-    console.error('Erreur lors de la réorganisation:', error);
+  } catch (error) {
+    console.error('❌ Erreur lors de la réorganisation:', error);
     apiError('Impossible de sauvegarder l\'ordre des todos');
     currentlyModifying.value = null;
   }
 };
 
-// 🛡️ GESTIONNAIRES D'ÉVÉNEMENTS AVEC PRÉSERVATION DU SCROLL
-const handleToggle = async (id: number) => {
-  await withScrollPreservation(id, async () => {
-    emit('toggleTodo', id);
-  });
-
-  // Réinitialiser Sortable après toggle avec sécurité
-  setTimeout(() => {
-    if (sortableContainer.value) {
-      initializeSortable();
-    }
-  }, 400);
+// Gestionnaires d'événements des todos
+const handleToggle = (id: number) => {
+  emit('toggleTodo', id);
 };
 
 const handleEdit = (todo: Todo) => {
-  // Sauvegarder position pour l'édition
-  saveScrollPosition();
   emit('editTodo', todo);
 };
 
-const handleDelete = async (id: number) => {
-  await withScrollPreservation(null, async () => {
-    emit('deleteTodo', id);
-  });
-
-  // Réinitialiser Sortable après suppression avec sécurité
-  setTimeout(() => {
-    if (sortableContainer.value) {
-      initializeSortable();
-    }
-  }, 400);
+const handleDelete = (id: number) => {
+  emit('deleteTodo', id);
 };
 
-// Initialiser Sortable après le montage
-onMounted(async () => {
-  await nextTick();
-  initializeSortable();
+// 🎯 Lifecycle hooks
+onMounted(() => {
+  console.log('📝 [TodoList] Composant monté');
+  nextTick(() => {
+    if (props.todos.length > 1) {
+      console.log('🎯 Initialisation initiale de Sortable');
+      initializeSortable();
+    }
+  });
 
   // Fermer le menu d'export au clic extérieur
-  document.addEventListener('click', (event: Event) => { // 🎯 CORRECTION : Type explicite
+  document.addEventListener('click', (event: Event) => {
     const target = event.target as Element;
     if (!target.closest(`.${styles.exportDropdown}`)) {
       closeExportMenu();
@@ -572,17 +439,16 @@ onMounted(async () => {
   });
 });
 
-// 🛡️ DESTRUCTION SÉCURISÉE lors des mises à jour
 onUpdated(() => {
-  // Si l'élément container n'existe plus, nettoyer Sortable
+  // Vérifier la cohérence après mise à jour
   if (!sortableContainer.value && sortableInstance) {
-    console.log('🧹 Élément container supprimé, nettoyage de Sortable...');
+    console.log('🧹 Container supprimé, nettoyage...');
     destroySortableInstance();
   }
 });
 
-// 🛡️ DESTRUCTION SÉCURISÉE lors du démontage
 onBeforeUnmount(() => {
+  console.log('📝 [TodoList] Nettoyage avant démontage');
   destroySortableInstance();
 });
 </script>

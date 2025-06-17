@@ -23,6 +23,7 @@
   align-items: center;
   height: 64px;
 }
+
 /* 
 .logo {
   font-size: var(--font-size-xl);
@@ -59,13 +60,14 @@
   background: var(--primary-light);
 }
 
-.navLink svg{
+.navLink svg {
   width: 20px;
-  color : var(--secondary-color);
+  color: var(--secondary-color);
   margin-right: var(--spacing-xs);
 }
 
-.navLink:hover svg, .navLink svg:hover{
+.navLink:hover svg,
+.navLink svg:hover {
   color: var(--primary-color) !important;
   background: var(--bg-hover);
 }
@@ -91,30 +93,32 @@
     padding: 0 var(--spacing-md);
     height: 56px;
   }
-  
+
   .logo {
     font-size: var(--font-size-lg);
   }
-  
+
   .navLinks {
     gap: var(--spacing-md);
   }
-  
+
   .navLink {
     padding: var(--spacing-xs) var(--spacing-sm);
     font-size: var(--font-size-sm);
   }
-  
+
   .main {
     padding: var(--spacing-xl) 0;
   }
-  
+
   .footer {
     padding: var(--spacing-md) 0;
   }
 }
 
-.loading, .error, .notFound {
+.loading,
+.error,
+.notFound {
   text-align: center;
   padding: var(--spacing-2xl) var(--spacing-xl);
 }
@@ -126,7 +130,8 @@
   border-radius: var(--radius-lg);
 }
 
-.btnDismiss, .btnRetry {
+.btnDismiss,
+.btnRetry {
   background: var(--error-color);
   color: var(--text-white);
   border: none;
@@ -134,6 +139,26 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   margin: 0 var(--spacing-xs);
+}
+
+/* .btnDelete svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--transition-fast);
+} */
+
+.btnDelete:hover {
+  background: var(--error-light);
+  transform: scale(1.1);
+}
+
+/* .btnDelete:hover svg {
+  transform: rotate(15deg);
+} */
+
+.btnDelete:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 .stats {

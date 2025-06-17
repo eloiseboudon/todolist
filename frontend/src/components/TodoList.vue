@@ -93,11 +93,22 @@
       💡 <strong>Astuce :</strong> Glissez-déposez les todos pour les réorganiser !
     </div>
 
-    <!-- Liste des todos avec drag & drop CORRIGÉ -->
+    <!-- 🎯 CORRIGÉ : Liste des todos avec drag & drop -->
     <div v-if="todos.length > 0" :class="styles.todosContainer">
-      <div ref="sortableContainer" :class="styles.sortableList" :key="`sortable-${todolist.id}-${todos.length}`">
-        <div v-for="todo in sortedTodos" :key="`todo-${todo.id}`" :data-id="todo.id" class="draggable-item">
-          <TodoItem :todo="todo" @toggle="handleToggle" @edit="handleEdit" @delete="handleDelete" />
+      <div ref="sortableContainer" :class="styles.sortableList">
+        <!-- 🎯 CORRECTION : Structure simplifiée pour le drag and drop -->
+        <div 
+          v-for="todo in sortedTodos" 
+          :key="`todo-${todo.id}`" 
+          :data-id="todo.id" 
+          :class="styles.draggableItem"
+        >
+          <TodoItem 
+            :todo="todo" 
+            @toggle="handleToggle" 
+            @edit="handleEdit" 
+            @delete="handleDelete" 
+          />
         </div>
       </div>
     </div>
@@ -115,7 +126,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, onUpdated, nextTick, watch } from 'vue';
 import Sortable from 'sortablejs';
 import TodoItem from './TodoItem.vue';
-import SimpleTodoForm from './SimpleTodoForm.vue'; // 🎯 AJOUTÉ
+import SimpleTodoForm from './SimpleTodoForm.vue';
 import { useNotifications } from '@/composables/useNotifications';
 import styles from '@/styles/components/TodoList.module.css';
 import { useTodos } from '@/composables/useTodos';
@@ -184,36 +195,6 @@ const scrollToTodo = (todoId: number, behavior: ScrollBehavior = 'smooth') => {
   }
 };
 
-// Wrapper pour préserver le scroll
-const withScrollPreservation = async (operation: () => Promise<any>, todoId?: number) => {
-  try {
-    // Sauvegarder position avant opération
-    if (todoId) {
-      currentlyModifying.value = todoId;
-    } else {
-      saveScrollPosition();
-      shouldPreserveScroll.value = true;
-    }
-
-    // Exécuter l'opération
-    await operation();
-
-    // Attendre que l'opération parent se termine
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    // Restaurer position ou scroller vers l'élément
-    if (todoId && currentlyModifying.value === todoId) {
-      scrollToTodo(todoId, 'instant');
-    } else if (shouldPreserveScroll.value) {
-      restoreScrollPosition();
-    }
-
-  } finally {
-    currentlyModifying.value = null;
-    shouldPreserveScroll.value = false;
-  }
-};
-
 // Computed - todos triés par priorité
 const sortedTodos = computed(() => {
   return [...props.todos].sort((a, b) => a.priority - b.priority);
@@ -223,12 +204,10 @@ const sortedTodos = computed(() => {
 const destroySortableInstance = () => {
   if (sortableInstance) {
     try {
-      // Vérifier que l'élément existe encore avant de détruire
       if (sortableContainer.value && sortableInstance.el) {
         sortableInstance.destroy();
-      } else {
-        console.log('🧹 Sortable déjà détruit ou élément absent');
       }
+      console.log('🧹 Sortable détruit');
     } catch (error) {
       console.warn('⚠️ Erreur lors de la destruction de Sortable:', error);
     } finally {
@@ -237,97 +216,98 @@ const destroySortableInstance = () => {
   }
 };
 
-// 🛡️ FONCTION D'INITIALISATION SÉCURISÉE
+// 🛡️ FONCTION D'INITIALISATION CORRIGÉE
 const initializeSortable = () => {
-  // Détruire l'instance précédente de manière sécurisée
+  // Détruire l'instance précédente
   destroySortableInstance();
 
-  // Vérifier que l'élément existe et qu'il y a assez de todos
+  // Vérifier les conditions
   if (!sortableContainer.value || props.todos.length <= 1) {
-    console.log('🚫 Pas assez de todos pour Sortable ou élément manquant');
+    console.log('🚫 Conditions non remplies pour Sortable');
     return;
   }
 
   try {
-    // Créer une nouvelle instance
+    console.log('🎯 Initialisation de Sortable...');
+    
+    // 🎯 CORRECTION : Configuration simplifiée et corrigée
     sortableInstance = new Sortable(sortableContainer.value, {
       animation: 200,
       ghostClass: styles.sortableGhost,
       chosenClass: styles.sortableChosen,
       dragClass: styles.sortableDrag,
-
-      // Gérer le déplacement
+      
+      // 🎯 CORRECTION : Supprimer ou corriger le handle
+      // handle: `.${styles.draggableItem}`, // ❌ Peut causer des problèmes
+      // Soit on l'enlève complètement, soit on utilise un selector plus spécifique
+      
+      // Options de scroll
+      scroll: true,
+      scrollSensitivity: 100,
+      scrollSpeed: 20,
+      
+      // Gestionnaire principal
       onEnd: async (evt) => {
         try {
+          console.log('🔄 Drag end event:', evt);
           const { oldIndex, newIndex } = evt;
 
           if (oldIndex === newIndex || oldIndex === undefined || newIndex === undefined) {
+            console.log('🚫 Pas de changement d\'ordre');
             return;
           }
 
+          console.log(`🎯 Réorganisation: ${oldIndex} → ${newIndex}`);
           await handleReorder(oldIndex, newIndex);
         } catch (error) {
           console.error('❌ Erreur lors du réordonnement:', error);
-          // Gérer l'erreur ici si nécessaire
         }
       },
-
-      // Personnalisation
-      handle: `.${styles.draggableItem}`,
-      scroll: true,
-      scrollSensitivity: 100,
-      scrollSpeed: 20
-
-      // ❌ SUPPRIMÉ: onError n'existe pas dans SortableJS
-      // La gestion d'erreurs se fait dans le try-catch global
+      
+      // Événements de debug
+      onStart: (evt) => {
+        console.log('🎯 Début du drag:', evt.oldIndex);
+      },
+      
+      onMove: (evt) => {
+        // Optionnel : log des mouvements
+        return true; // Autoriser le mouvement
+      }
     });
 
+    console.log('✅ Sortable initialisé avec succès');
   } catch (error) {
     console.error('❌ Erreur lors de la création de Sortable:', error);
     sortableInstance = null;
   }
 };
 
-// 🎯 WATCHERS POUR RÉINITIALISER SORTABLE ET GÉRER LE SCROLL
-watch(() => props.todos.length, (newLength, oldLength) => {
-  // Réinitialiser Sortable seulement si nécessaire
+// 🎯 WATCHERS POUR RÉINITIALISER SORTABLE
+watch(() => props.todos.length, (newLength) => {
+  console.log(`📊 Changement nombre de todos: ${newLength}`);
   nextTick(() => {
     if (newLength > 1 && !sortableInstance) {
+      console.log('🔄 Réinitialisation de Sortable (ajout)');
       initializeSortable();
     } else if (newLength <= 1 && sortableInstance) {
+      console.log('🧹 Destruction de Sortable (suppression)');
       destroySortableInstance();
     }
   });
 });
 
-// 🎯 WATCHER POUR DÉTECTER LES MODIFICATIONS ET GÉRER LE SCROLL
-watch(() => props.todos, (newTodos, oldTodos) => {
-  if (oldTodos && currentlyModifying.value) {
-    // Une todo spécifique est en cours de modification
-    const modifiedTodo = newTodos.find(t => t.id === currentlyModifying.value);
-    if (modifiedTodo) {
-      scrollToTodo(currentlyModifying.value, 'instant');
-    }
-  } else if (oldTodos && shouldPreserveScroll.value) {
-    // Préserver la position de scroll pour les autres opérations
-    restoreScrollPosition();
-  }
-}, { deep: true, flush: 'post' });
-
-// 🎯 Toggle export menu
+// 🎯 Gestionnaires d'événements du menu
 const toggleExportMenu = () => {
   showExportMenu.value = !showExportMenu.value;
 };
 
-// 🎯 Fermer le menu d'export au clic extérieur
 const closeExportMenu = () => {
   showExportMenu.value = false;
 };
 
-// 🎯 Gestionnaire d'export unifié
+// 🎯 Gestionnaire d'export
 const handleExport = async (type: string) => {
   closeExportMenu();
-
   try {
     const { exportTodoListWithOptions, downloadTodoListWithOptions, exportPresets } = useTodos();
     
@@ -354,7 +334,6 @@ const handleExport = async (type: string) => {
   }
 };
 
-// 🎯 Export avec options personnalisées
 const exportWithOptions = async () => {
   const { downloadTodoListWithOptions } = useTodos();
   const options: ExportOptions = {
@@ -364,42 +343,35 @@ const exportWithOptions = async () => {
     sortBy: 'name',
     format: 'pretty'
   };
-
   await downloadTodoListWithOptions(props.todolist, props.todos, options);
 };
 
-// 🎯 Fonction pour afficher le formulaire
-const toggleAddForm = async () => {
+// 🎯 Gestion du formulaire
+const toggleAddForm = () => {
   showAddForm.value = !showAddForm.value;
-
   if (showAddForm.value) {
-    // Fermer le menu d'export s'il est ouvert
     closeExportMenu();
   }
 };
 
-// 🎯 Annuler l'ajout de todo
 const cancelAddTodo = () => {
   showAddForm.value = false;
 };
 
-// 🎯 NOUVEAU : Gestionnaire pour SimpleTodoForm avec priorité
 const handleAddTodoWithPriority = (name: string, priority?: number) => {
-  console.log('📝 [TodoList] Émission addTodo:', { name, priority });
+  console.log('📝 [TodoList] Ajout todo:', { name, priority });
   emit('addTodo', name, priority);
-  showAddForm.value = false; // Fermer le formulaire après ajout
+  showAddForm.value = false;
 };
 
-// Gérer la réorganisation avec préservation du scroll
+// 🎯 Gestionnaire de réorganisation
 const handleReorder = async (oldIndex: number, newIndex: number) => {
-  // Identifier la todo qui a été déplacée
   const movedTodo = sortedTodos.value[oldIndex];
   if (movedTodo) {
     currentlyModifying.value = movedTodo.id;
-    console.log(`🔀 Réorganisation: todo ${movedTodo.id} de ${oldIndex} vers ${newIndex}`);
+    console.log(`🔀 Todo déplacée: ${movedTodo.name} (${oldIndex} → ${newIndex})`);
   }
 
-  // Afficher notification de sauvegarde
   const savingId = saving();
 
   try {
@@ -408,8 +380,9 @@ const handleReorder = async (oldIndex: number, newIndex: number) => {
     const [movedTodoItem] = reorderedTodos.splice(oldIndex, 1);
     reorderedTodos.splice(newIndex, 0, movedTodoItem);
 
-    // Extraire les IDs dans le bon ordre
+    // Extraire les IDs
     const newOrder = reorderedTodos.map(todo => todo.id);
+    console.log('📋 Nouvel ordre:', newOrder);
 
     // Émettre l'événement
     emit('reorderTodos', newOrder);
@@ -419,7 +392,7 @@ const handleReorder = async (oldIndex: number, newIndex: number) => {
       todoSaved();
     }, 500);
 
-    // Scroller vers la todo déplacée après un délai
+    // Scroller vers la todo déplacée
     if (movedTodo) {
       setTimeout(() => {
         scrollToTodo(movedTodo.id, 'smooth');
@@ -428,13 +401,13 @@ const handleReorder = async (oldIndex: number, newIndex: number) => {
     }
 
   } catch (error) {
-    console.error('Erreur lors de la réorganisation:', error);
+    console.error('❌ Erreur lors de la réorganisation:', error);
     apiError('Impossible de sauvegarder l\'ordre des todos');
     currentlyModifying.value = null;
   }
 };
 
-// Gestionnaires d'événements
+// Gestionnaires d'événements des todos
 const handleToggle = (id: number) => {
   emit('toggleTodo', id);
 };
@@ -447,27 +420,35 @@ const handleDelete = (id: number) => {
   emit('deleteTodo', id);
 };
 
-// Lifecycle hooks
+// 🎯 Lifecycle hooks
 onMounted(() => {
   console.log('📝 [TodoList] Composant monté');
-  if (props.todos.length > 1) {
-    nextTick(() => {
+  nextTick(() => {
+    if (props.todos.length > 1) {
+      console.log('🎯 Initialisation initiale de Sortable');
       initializeSortable();
-    });
+    }
+  });
+
+  // Fermer le menu d'export au clic extérieur
+  document.addEventListener('click', (event: Event) => {
+    const target = event.target as Element;
+    if (!target.closest(`.${styles.exportDropdown}`)) {
+      closeExportMenu();
+    }
+  });
+});
+
+onUpdated(() => {
+  // Vérifier la cohérence après mise à jour
+  if (!sortableContainer.value && sortableInstance) {
+    console.log('🧹 Container supprimé, nettoyage...');
+    destroySortableInstance();
   }
 });
 
 onBeforeUnmount(() => {
   console.log('📝 [TodoList] Nettoyage avant démontage');
   destroySortableInstance();
-});
-
-onUpdated(() => {
-  // Réinitialiser Sortable après mise à jour si nécessaire
-  if (props.todos.length > 1 && !sortableInstance) {
-    nextTick(() => {
-      initializeSortable();
-    });
-  }
 });
 </script>

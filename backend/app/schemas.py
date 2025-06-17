@@ -232,3 +232,25 @@ class TodoFilter(BaseModel):
             raise ValueError('La recherche doit contenir au moins 2 caractères')
         
         return cleaned
+    
+    
+# Categories 
+
+class CategoryBase(BaseModel):
+    id: int = Field(..., gt=0, description="Identifiant unique de la liste")
+    name: str = Field(
+        default="Nom de la catégorie", 
+        description="Nom de la catégorie"
+    )
+    color: str = Field(
+        default="#3B82F6", 
+        description="Couleur de la catégorie"
+    )
+    icone: str = Field(
+        default="/icones/categories", 
+        description="Icone de la catégorie"
+    )
+    
+class CategoryCreate(CategoryBase):
+# Hérite de toutes les validations de CategoryCreate
+    pass  

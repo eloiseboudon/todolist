@@ -28,7 +28,7 @@
       />
       
       <!-- Boutons d'action groupés -->
-      <div style="display: flex; gap: var(--spacing-xs);">
+      <div :class="styles.actionButtons">
         <button 
           @click="handleSubmit" 
           :disabled="!todoName.trim()"
@@ -48,11 +48,35 @@
           ✕
         </button>
       </div>
-    </div>
-    
-    <!-- Aide contextuelle discrète -->
-    <div :class="styles.formHint">
-      💡 <strong>Astuce :</strong> Laissez la priorité vide pour ajouter en fin de liste, ou indiquez un chiffre (1 = urgent).
+
+      <!-- Icône d'information avec tooltip -->
+      <div :class="styles.infoTooltip">
+        <button 
+          type="button"
+          :class="styles.infoButton"
+          @mouseenter="showTooltip = true"
+          @mouseleave="showTooltip = false"
+          @click="toggleTooltip"
+          title="Aide et astuces"
+        >
+          ℹ️
+        </button>
+        
+        <!-- Tooltip avec l'astuce -->
+        <div 
+          v-if="showTooltip" 
+          :class="styles.tooltipContent"
+          @mouseenter="showTooltip = true"
+          @mouseleave="showTooltip = false"
+        >
+          <div :class="styles.tooltipArrow"></div>
+          <div :class="styles.tooltipText">
+            <strong>💡 Astuce :</strong><br>
+            Laissez la priorité vide pour ajouter en fin de liste,<br>
+            ou indiquez un chiffre (1 = urgent).
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -72,6 +96,7 @@ const emit = defineEmits<Emits>();
 const todoName = ref('');
 const customPriority = ref<number | null>(null);
 const nameInput = ref<HTMLInputElement>();
+const showTooltip = ref(false);
 
 // Méthodes principales
 const handleSubmit = () => {
@@ -98,6 +123,11 @@ const handleCancel = () => {
 const resetForm = () => {
   todoName.value = '';
   customPriority.value = null;
+  showTooltip.value = false;
+};
+
+const toggleTooltip = () => {
+  showTooltip.value = !showTooltip.value;
 };
 
 const focusInput = async () => {

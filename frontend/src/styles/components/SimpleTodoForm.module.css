@@ -1,5 +1,5 @@
 /* ===================================================
-   SIMPLE TODO FORM - TaskFlow Design System
+   SIMPLE TODO FORM - TaskFlow Design System (Version une ligne)
    =================================================== */
 
 .simpleTodoForm {
@@ -22,7 +22,7 @@
   display: flex;
   gap: var(--spacing-sm);
   align-items: center;
-  margin-bottom: var(--spacing-sm);
+  position: relative; /* Pour le positionnement du tooltip */
 }
 
 /* ===== CHAMP NOM PRINCIPAL ===== */
@@ -37,6 +37,7 @@
   background: var(--bg-primary);
   transition: all var(--transition-fast);
   font-weight: var(--font-weight-normal);
+  min-width: 200px;
 }
 
 .todoNameInput:focus {
@@ -61,15 +62,15 @@
   font-family: var(--font-family-main);
   text-align: center;
   color: var(--text-primary);
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   transition: all var(--transition-fast);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-normal);
 }
 
 .priorityInput:focus {
   outline: none;
-  border-color: var(--warning-color);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warning-color) 15%, transparent);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 15%, transparent);
   background: var(--bg-primary);
 }
 
@@ -79,51 +80,49 @@
   font-weight: var(--font-weight-normal);
 }
 
-/* Quand il y a une valeur dans le champ priorité */
-.priorityInput:not(:placeholder-shown) {
-  background: var(--warning-light);
-  border-color: var(--warning-color);
-  color: var(--warning-color);
-  font-weight: var(--font-weight-semibold);
+/* ===== BOUTONS D'ACTION GROUPÉS ===== */
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-xs);
 }
 
-/* ===== BOUTONS D'ACTION ===== */
+/* ===== BOUTON AJOUTER ===== */
 .btnAdd {
-  background: var(--success-gradient);
-  color: var(--text-white);
-  border: none;
+  background: var(--primary-color);
+  color: white;
+  border: 2px solid var(--primary-color);
   width: 42px;
   height: 42px;
   border-radius: var(--radius-lg);
   cursor: pointer;
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px color-mix(in srgb, var(--success-color) 20%, transparent);
 }
 
 .btnAdd:hover:not(:disabled) {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px color-mix(in srgb, var(--success-color) 30%, transparent);
+  box-shadow: var(--shadow-md);
 }
 
 .btnAdd:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 4px color-mix(in srgb, var(--success-color) 20%, transparent);
+  box-shadow: var(--shadow-sm);
 }
 
 .btnAdd:disabled {
-  background: var(--text-muted);
-  color: var(--text-white);
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
+/* ===== BOUTON ANNULER ===== */
 .btnCancel {
   background: var(--bg-secondary);
   color: var(--text-secondary);
@@ -153,24 +152,99 @@
   box-shadow: none;
 }
 
-/* ===== AIDE CONTEXTUELLE ===== */
-.formHint {
-  font-size: var(--font-size-xs);
-  color: var(--text-secondary);
-  margin: 0;
-  padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--border-color);
-  text-align: center;
-  font-weight: var(--font-weight-normal);
+/* ===== ICÔNE D'INFORMATION ET TOOLTIP ===== */
+.infoTooltip {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.infoButton {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.infoButton:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* ===== CONTENU DU TOOLTIP ===== */
+.tooltipContent {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 0;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  min-width: 280px;
+  max-width: 350px;
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+/* Flèche du tooltip */
+.tooltipArrow {
+  position: absolute;
+  top: 100%;
+  right: 16px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--border-color);
+}
+
+.tooltipArrow::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid var(--bg-card);
+}
+
+.tooltipText {
+  font-size: var(--font-size-sm);
   line-height: 1.4;
-}
-
-.formHint strong {
   color: var(--text-primary);
-  font-weight: var(--font-weight-medium);
 }
 
-/* ===== ANIMATIONS ===== */
+.tooltipText strong {
+  color: var(--primary-color);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ===== ANIMATION DU TOOLTIP ===== */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== ANIMATION D'APPARITION DU FORMULAIRE ===== */
 .simpleTodoForm {
   animation: slideDown 0.2s ease-out;
 }
@@ -199,21 +273,29 @@
   }
   
   .todoNameInput {
-    width: 100%;
+    flex: 1 1 100%;
+    min-width: unset;
     margin-bottom: var(--spacing-xs);
   }
   
   .priorityInput {
     flex: 1;
     width: auto;
-    min-width: 100px;
+    min-width: 80px;
   }
   
-  .btnAdd,
-  .btnCancel {
-    width: 46px;
-    height: 46px;
-    font-size: var(--font-size-xl);
+  .actionButtons {
+    flex-shrink: 0;
+  }
+  
+  .infoTooltip {
+    order: -1;
+    margin-left: auto;
+  }
+  
+  .tooltipContent {
+    right: -50px;
+    min-width: 250px;
   }
 }
 
@@ -223,14 +305,19 @@
     align-items: stretch;
   }
   
+  .todoNameInput {
+    width: 100%;
+  }
+  
   .priorityInput {
     width: 100%;
     text-align: left;
   }
   
-  .formRow div {
+  .actionButtons {
     display: flex;
     gap: var(--spacing-sm);
+    justify-content: center;
   }
   
   .btnAdd,
@@ -238,13 +325,26 @@
     flex: 1;
     height: 48px;
   }
+  
+  .infoTooltip {
+    align-self: center;
+    order: 0;
+    margin: var(--spacing-sm) 0 0 0;
+  }
+  
+  .tooltipContent {
+    right: -100px;
+    left: -100px;
+    min-width: unset;
+  }
 }
 
 /* ===== ACCESSIBILITÉ ===== */
 .todoNameInput:focus-visible,
 .priorityInput:focus-visible,
 .btnAdd:focus-visible,
-.btnCancel:focus-visible {
+.btnCancel:focus-visible,
+.infoButton:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
@@ -264,13 +364,16 @@
   .todoNameInput,
   .priorityInput,
   .btnAdd,
-  .btnCancel {
+  .btnCancel,
+  .infoButton,
+  .tooltipContent {
     transition: none;
     animation: none;
   }
   
   .btnAdd:hover,
-  .btnCancel:hover {
+  .btnCancel:hover,
+  .infoButton:hover {
     transform: none;
   }
 }
@@ -311,7 +414,11 @@
     border-width: 3px;
   }
   
-  .formHint {
+  .tooltipContent {
+    border-width: 3px;
+  }
+  
+  .tooltipText {
     color: var(--text-primary);
   }
 }

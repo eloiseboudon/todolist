@@ -31,13 +31,6 @@ import styles from '@/styles/components/TodoItem.module.css';
 import { useConfirm } from '@/composables/useConfirm';
 import type { Todo } from '@/services/api';
 
-// interface Todo {
-//   id: number;
-//   name: string;
-//   completed: boolean;
-//   priority: number;
-// }
-
 interface Props {
   todo: Todo;
 }

@@ -175,8 +175,8 @@
 }
 
 .infoButton:hover {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
+  background: var(--secondary-hover);
+  border-color: var(--secondary-hover);
   color: white;
   transform: scale(1.05);
 }

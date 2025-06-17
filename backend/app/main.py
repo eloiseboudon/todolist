@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes import todos, todolists
+from app.routes import todos, todolists, categories
 from app.db.session import engine
 from app.db.models import Base
 
@@ -22,6 +22,7 @@ app.add_middleware(
 
 app.include_router(todos.router, prefix="/todos", tags=["todos"])
 app.include_router(todolists.router, prefix="/todolists", tags=["todolists"])
+app.include_router(categories.router, prefix="/category", tags=["category"])
 
 # Route de test optionnelle
 @app.get("/")

@@ -24,4 +24,15 @@ class Todo(Base):
     completed_at = Column(DateTime, nullable=True)
     todolist_id = Column(Integer, ForeignKey("todolist.id"))
     description = Column(String, nullable=True)
+    category_id = Column(Integer, ForeignKey("category.id"))
     todolist = relationship("TodoList", back_populates="todos")
+    category = relationship("Category",back_populates="category")
+
+class Category(Base):
+    __tablename__ = "category"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=True)
+    color = Column(String, default="#3B82F6")
+    icon = Column(String, nullable=True)
+

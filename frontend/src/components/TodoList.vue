@@ -4,7 +4,7 @@
     <div :class="styles.todoListHeader">
       <div :class="styles.titleSection">
         <h2>{{ todolist.name }}</h2>
-        <span :class="styles.todoCount">{{ todos.length }} todo(s)</span>
+        <span :class="styles.todoCount">{{ todos.length }} tâche(s)</span>
       </div>
 
       <div :class="styles.mainActions">
@@ -12,7 +12,8 @@
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg> Nouvelle tâche
+          </svg> 
+          Nouvelle tâche
         </button>
 
         <!-- Menu d'export avec dropdown -->
@@ -82,12 +83,58 @@
       </div>
     </div>
 
-    <!-- Formulaire d'ajout -->
+    <!-- 🎯 NOUVEAU : Formulaire simple avec priorité -->
     <div v-if="showAddForm" :class="styles.addTodoForm">
-      <input ref="todoInputRef" v-model="newTodoName" type="text" placeholder="Nom du todo..." @keyup.enter="addTodo"
-        @keydown.escape="cancelAdd" :class="styles.todoInput" />
-      <button @click="addTodo" :class="styles.btnConfirm">Ajouter</button>
-      <button @click="cancelAdd" :class="styles.btnCancel">Annuler</button>
+      <div :class="styles.formRow">
+        <!-- Champ nom principal -->
+        <input 
+          ref="todoInputRef" 
+          v-model="newTodoName" 
+          type="text" 
+          placeholder="Nom de la tâche..." 
+          :class="styles.todoInput" 
+          @keydown.enter="addTodo"
+          @keydown.escape="cancelAdd" 
+          maxlength="200"
+          required
+        />
+        
+        <!-- Champ priorité compact -->
+        <input
+          v-model.number="customPriority"
+          type="number"
+          min="1"
+          max="999"
+          placeholder="Priorité"
+          :class="styles.priorityInput"
+          title="Priorité optionnelle (ex: 1 = urgent)"
+          @keydown.enter="addTodo"
+          @keydown.escape="cancelAdd"
+        />
+        
+        <!-- Boutons d'action -->
+        <button 
+          @click="addTodo" 
+          :disabled="!newTodoName.trim()"
+          :class="styles.btnConfirm"
+          title="Ajouter la tâche"
+        >
+          ✓
+        </button>
+        
+        <button 
+          @click="cancelAdd" 
+          :class="styles.btnCancel"
+          title="Annuler"
+        >
+          ✕
+        </button>
+      </div>
+      
+      <!-- Aide discrète -->
+      <div :class="styles.formHint">
+        💡 <strong>Astuce :</strong> Laissez la priorité vide pour ajouter en fin de liste, ou indiquez un chiffre (1 = urgent).
+      </div>
     </div>
 
     <!-- Instructions drag & drop -->
@@ -120,18 +167,8 @@ import { useNotifications } from '@/composables/useNotifications';
 import styles from '@/styles/components/TodoList.module.css';
 import { useTodos } from '@/composables/useTodos';
 import type { ExportOptions } from '@/types';
-
-interface Todo {
-  id: number;
-  name: string;
-  completed: boolean;
-  priority: number;
-}
-
-interface TodoList {
-  id: number;
-  name: string;
-}
+// 🎯 CORRECTION : Utiliser les types de l'API au lieu d'interfaces locales
+import type { Todo, TodoList } from '@/services/api';
 
 interface Props {
   todolist: TodoList;
@@ -139,7 +176,7 @@ interface Props {
 }
 
 interface Emits {
-  addTodo: [name: string];
+  addTodo: [name: string, priority?: number]; // 🎯 AJOUTÉ : Support de la priorité
   toggleTodo: [id: number];
   editTodo: [todo: Todo];
   deleteTodo: [id: number];
@@ -160,9 +197,10 @@ let sortableInstance: Sortable | null = null;
 // État local
 const showAddForm = ref(false);
 const newTodoName = ref('');
+const customPriority = ref<number | null>(null); // 🎯 NOUVEAU : Priorité personnalisée
 const showExportMenu = ref(false);
 
-// 🎯 GESTION DU SCROLL - Nouveaux refs
+// 🎯 GESTION DU SCROLL - Refs existants
 const lastScrollPosition = ref(0);
 const currentlyModifying = ref<number | null>(null);
 const shouldPreserveScroll = ref(false);
@@ -246,7 +284,7 @@ const destroySortableInstance = () => {
       } else {
         console.log('🧹 Sortable déjà détruit ou élément absent');
       }
-    } catch (error) {
+    } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
       console.warn('⚠️ Erreur lors de la destruction de Sortable:', error);
     } finally {
       sortableInstance = null;
@@ -289,14 +327,9 @@ const initializeSortable = () => {
       scroll: true,
       scrollSensitivity: 100,
       scrollSpeed: 20,
-
-      // 🛡️ GESTION D'ERREURS
-      onError: (error) => {
-        console.error('❌ Erreur SortableJS:', error);
-      }
     });
 
-  } catch (error) {
+  } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
     console.error('❌ Erreur lors de la création de Sortable:', error);
     sortableInstance = null;
   }
@@ -360,7 +393,7 @@ const handleExport = async (type: string) => {
         await exportWithOptions();
         break;
     }
-  } catch (error) {
+  } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
     console.error('Erreur export:', error);
     apiError('Erreur lors de l\'export');
   }
@@ -392,12 +425,13 @@ const toggleAddForm = async () => {
     // Mettre le focus sur l'input
     todoInputRef.value?.focus();
   } else {
-    // Réinitialiser le champ si on ferme le formulaire
+    // Réinitialiser les champs si on ferme le formulaire
     newTodoName.value = '';
+    customPriority.value = null; // 🎯 NOUVEAU : Reset priorité
   }
 };
 
-// 🎯 Ajouter un todo
+// 🎯 NOUVEAU : Ajouter un todo avec priorité optionnelle
 const addTodo = async () => {
   const todoName = newTodoName.value.trim();
 
@@ -412,11 +446,17 @@ const addTodo = async () => {
     saveScrollPosition();
     shouldPreserveScroll.value = true;
 
-    // Émettre l'événement vers le parent
-    emit('addTodo', todoName);
+    // 🎯 NOUVEAU : Récupérer la priorité personnalisée
+    const priority = customPriority.value && customPriority.value > 0 ? customPriority.value : undefined;
+
+    console.log('📝 [TodoList] Ajout todo avec priorité:', { name: todoName, priority });
+
+    // Émettre l'événement vers le parent avec la priorité
+    emit('addTodo', todoName, priority);
 
     // Réinitialiser et garder le focus pour ajouter rapidement
     newTodoName.value = '';
+    customPriority.value = null; // 🎯 NOUVEAU : Reset priorité
     await nextTick();
     todoInputRef.value?.focus();
 
@@ -426,7 +466,7 @@ const addTodo = async () => {
       initializeSortable();
     }
 
-  } catch (error) {
+  } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
     console.error('Erreur ajout todo:', error);
     // Remettre le focus même en cas d'erreur
     await nextTick();
@@ -438,6 +478,7 @@ const addTodo = async () => {
 const cancelAdd = () => {
   showAddForm.value = false;
   newTodoName.value = '';
+  customPriority.value = null; // 🎯 NOUVEAU : Reset priorité
 };
 
 // Gérer la réorganisation avec préservation du scroll
@@ -477,7 +518,7 @@ const handleReorder = async (oldIndex: number, newIndex: number) => {
       }, 600);
     }
 
-  } catch (error) {
+  } catch (error: unknown) { // 🎯 CORRECTION : Type explicite
     console.error('Erreur lors de la réorganisation:', error);
     apiError('Impossible de sauvegarder l\'ordre des todos');
     currentlyModifying.value = null;
@@ -523,7 +564,7 @@ onMounted(async () => {
   initializeSortable();
 
   // Fermer le menu d'export au clic extérieur
-  document.addEventListener('click', (event) => {
+  document.addEventListener('click', (event: Event) => { // 🎯 CORRECTION : Type explicite
     const target = event.target as Element;
     if (!target.closest(`.${styles.exportDropdown}`)) {
       closeExportMenu();

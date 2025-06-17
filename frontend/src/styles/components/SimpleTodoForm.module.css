@@ -1,0 +1,317 @@
+/* ===================================================
+   SIMPLE TODO FORM - TaskFlow Design System
+   =================================================== */
+
+.simpleTodoForm {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-md) var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.simpleTodoForm:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== LIGNE PRINCIPALE DU FORMULAIRE ===== */
+.formRow {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* ===== CHAMP NOM PRINCIPAL ===== */
+.todoNameInput {
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-main);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  transition: all var(--transition-fast);
+  font-weight: var(--font-weight-normal);
+}
+
+.todoNameInput:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 15%, transparent);
+  background: var(--bg-primary);
+}
+
+.todoNameInput::placeholder {
+  color: var(--text-muted);
+  font-weight: var(--font-weight-normal);
+}
+
+/* ===== CHAMP PRIORITÉ ===== */
+.priorityInput {
+  width: 85px;
+  padding: var(--spacing-md) var(--spacing-sm);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-main);
+  text-align: center;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  transition: all var(--transition-fast);
+  font-weight: var(--font-weight-medium);
+}
+
+.priorityInput:focus {
+  outline: none;
+  border-color: var(--warning-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warning-color) 15%, transparent);
+  background: var(--bg-primary);
+}
+
+.priorityInput::placeholder {
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+}
+
+/* Quand il y a une valeur dans le champ priorité */
+.priorityInput:not(:placeholder-shown) {
+  background: var(--warning-light);
+  border-color: var(--warning-color);
+  color: var(--warning-color);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ===== BOUTONS D'ACTION ===== */
+.btnAdd {
+  background: var(--success-gradient);
+  color: var(--text-white);
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--success-color) 20%, transparent);
+}
+
+.btnAdd:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px color-mix(in srgb, var(--success-color) 30%, transparent);
+}
+
+.btnAdd:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--success-color) 20%, transparent);
+}
+
+.btnAdd:disabled {
+  background: var(--text-muted);
+  color: var(--text-white);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btnCancel {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 2px solid var(--border-color);
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnCancel:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btnCancel:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ===== AIDE CONTEXTUELLE ===== */
+.formHint {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin: 0;
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  font-weight: var(--font-weight-normal);
+  line-height: 1.4;
+}
+
+.formHint strong {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ===== ANIMATIONS ===== */
+.simpleTodoForm {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .simpleTodoForm {
+    margin: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+  
+  .formRow {
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+  
+  .todoNameInput {
+    width: 100%;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .priorityInput {
+    flex: 1;
+    width: auto;
+    min-width: 100px;
+  }
+  
+  .btnAdd,
+  .btnCancel {
+    width: 46px;
+    height: 46px;
+    font-size: var(--font-size-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .formRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .priorityInput {
+    width: 100%;
+    text-align: left;
+  }
+  
+  .formRow div {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+  
+  .btnAdd,
+  .btnCancel {
+    flex: 1;
+    height: 48px;
+  }
+}
+
+/* ===== ACCESSIBILITÉ ===== */
+.todoNameInput:focus-visible,
+.priorityInput:focus-visible,
+.btnAdd:focus-visible,
+.btnCancel:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* États d'interaction améliorés */
+.todoNameInput:hover {
+  border-color: var(--border-hover);
+}
+
+.priorityInput:hover {
+  border-color: var(--border-hover);
+}
+
+/* Support pour les préférences de mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+  .simpleTodoForm,
+  .todoNameInput,
+  .priorityInput,
+  .btnAdd,
+  .btnCancel {
+    transition: none;
+    animation: none;
+  }
+  
+  .btnAdd:hover,
+  .btnCancel:hover {
+    transform: none;
+  }
+}
+
+/* ===== VALIDATION VISUELLE ===== */
+.todoNameInput:invalid {
+  border-color: var(--error-color);
+}
+
+.todoNameInput:valid:not(:placeholder-shown) {
+  border-color: var(--success-color);
+}
+
+/* Style pour les navigateurs qui supportent :has() */
+@supports selector(:has(*)) {
+  .formRow:has(.priorityInput:not(:placeholder-shown)) .todoNameInput {
+    border-color: var(--primary-color);
+  }
+}
+
+/* ===== ÉTATS HOVER GROUPÉS ===== */
+.formRow:hover .todoNameInput {
+  border-color: var(--border-hover);
+}
+
+.formRow:hover .priorityInput {
+  border-color: var(--border-hover);
+}
+
+/* ===== AMÉLIORATION DU CONTRASTE ===== */
+@media (prefers-contrast: high) {
+  .simpleTodoForm {
+    border-width: 3px;
+  }
+  
+  .todoNameInput,
+  .priorityInput {
+    border-width: 3px;
+  }
+  
+  .formHint {
+    color: var(--text-primary);
+  }
+}

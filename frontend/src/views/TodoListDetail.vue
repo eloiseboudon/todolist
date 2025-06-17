@@ -35,10 +35,17 @@
     </div>
 
     <!-- Contenu principal -->
-    <div v-if="!loading && currentTodolist" :class="styles.content">
-      <TodoList :todolist="currentTodolist" :todos="sortedTodos" @addTodo="handleAddTodo" @toggleTodo="handleToggleTodo"
-        @editTodo="handleEditTodo" @deleteTodo="handleDeleteTodo" @reorderTodos="handleReorderTodos" />
-
+  <div v-if="!loading && currentTodolist" :class="styles.content">
+      <!-- 🎯 MODIFIÉ : Ajout du paramètre priority dans l'événement -->
+      <TodoList 
+        :todolist="currentTodolist" 
+        :todos="sortedTodos" 
+        @addTodo="handleAddTodoWithPriority"
+        @toggleTodo="handleToggleTodo"
+        @editTodo="handleEditTodo" 
+        @deleteTodo="handleDeleteTodo" 
+        @reorderTodos="handleReorderTodos" 
+      />
       <!-- Statistiques -->
       <div :class="styles.stats">
         <div :class="styles.statCard">
@@ -96,6 +103,19 @@ onMounted(() => {
 watch(() => props.id, (newId) => {
   loadTodoList(parseInt(newId));
 });
+
+const handleAddTodoWithPriority = async (name: string, priority?: number) => {
+  try {
+    await addTodo(parseInt(props.id), name, priority);
+  } catch (err) {
+    console.error('Erreur ajout todo avec priorité - Détail complet:', err);
+    if (err instanceof Error) {
+      console.error('Message:', err.message);
+      console.error('Stack:', err.stack);
+    }
+    console.error('Erreur complète:', JSON.stringify(err, null, 2));
+  }
+};
 
 // Handlers
 const handleAddTodo = async (name: string) => {

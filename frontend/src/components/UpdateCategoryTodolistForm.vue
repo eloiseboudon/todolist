@@ -142,7 +142,7 @@ const handleSubmit = async () => {
         };
 
         const updatedTodolist = await todoListsApi.update(props.todolist.id, updateData);
-
+        emit('updated', updatedTodolist);
         success(
             'Catégorie mise à jour',
             selectedCategoryId.value

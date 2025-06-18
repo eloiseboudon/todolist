@@ -235,22 +235,45 @@ class TodoFilter(BaseModel):
     
     
 # Categories 
-
 class CategoryBase(BaseModel):
-    id: int = Field(..., gt=0, description="Identifiant unique de la liste")
     name: str = Field(
-        default="Nom de la catégorie", 
+        ...,
+        min_length=1,
+        max_length=100,
         description="Nom de la catégorie"
     )
     color: str = Field(
-        default="#3B82F6", 
+        default="#3B82F6",
+        pattern=r"^#[0-9A-Fa-f]{6}$",  # Validation couleur hex
         description="Couleur de la catégorie"
     )
-    icone: str = Field(
-        default="/icones/categories", 
-        description="Icone de la catégorie"
+    icon: str = Field(
+        default="folder",
+        max_length=50,
+        description="Icône de la catégorie"
     )
     
+    @field_validator('name')
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        cleaned = v.strip()
+        if not cleaned:
+            raise ValueError('Le nom ne peut pas être vide')
+        return cleaned
+
 class CategoryCreate(CategoryBase):
-# Hérite de toutes les validations de CategoryCreate
-    pass  
+    """Pour créer une catégorie (sans id)"""
+    pass
+
+class CategoryUpdate(BaseModel):
+    """Pour mettre à jour une catégorie"""
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
+    icon: Optional[str] = Field(None, max_length=50)
+
+class Category(CategoryBase):
+    """Modèle de réponse avec id"""
+    id: int = Field(..., gt=0, description="Identifiant unique")
+    
+    class Config:
+        from_attributes = True

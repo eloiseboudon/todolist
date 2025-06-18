@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Text
 from sqlalchemy.sql import func
 from app.db.session import Base
 from sqlalchemy.orm import relationship
@@ -10,7 +10,27 @@ class TodoList(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
+    
+    # Relations
     todos = relationship("Todo", back_populates="todolist", cascade="all, delete-orphan")
+
+
+class Category(Base):
+    __tablename__ = "categories"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), nullable=False, unique=True)
+    color = Column(String(7), nullable=False)  # Format #RRGGBB
+    icon = Column(String(50), nullable=False)
+    description = Column(Text, nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # Relations
+    todos = relationship("Todo", back_populates="category")
+
+    def __repr__(self):
+        return f"<Category(name='{self.name}', color='{self.color}')>"
 
 
 class Todo(Base):
@@ -22,17 +42,15 @@ class Todo(Base):
     priority = Column(Integer, default=1)
     created_at = Column(DateTime, server_default=func.now())
     completed_at = Column(DateTime, nullable=True)
-    todolist_id = Column(Integer, ForeignKey("todolist.id"))
     description = Column(String, nullable=True)
-    category_id = Column(Integer, ForeignKey("category.id"))
-    todolist = relationship("TodoList", back_populates="todos")
-    category = relationship("Category",back_populates="category")
-
-class Category(Base):
-    __tablename__ = "category"
     
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=True)
-    color = Column(String, default="#3B82F6")
-    icon = Column(String, nullable=True)
+    # Foreign Keys
+    todolist_id = Column(Integer, ForeignKey("todolist.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
+    
+    # Relations
+    todolist = relationship("TodoList", back_populates="todos")
+    category = relationship("Category", back_populates="todos")
 
+    def __repr__(self):
+        return f"<Todo(name='{self.name}', completed={self.completed})>"

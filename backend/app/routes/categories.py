@@ -13,8 +13,8 @@ def get_categories(db: Session = Depends(get_db)):
     categories = db.query(models.Category).all()
     return categories
 
-@router.get("/active", response_model=Category)
-def get_categorie(category_id:int, db: Session = Depends(get_db)):
+@router.get("/active", response_model=List[Category])
+def get_categorie_active(db: Session = Depends(get_db)):
     categories = db.query(models.Category).filter(models.Category.is_active == True).all()
     return categories
 

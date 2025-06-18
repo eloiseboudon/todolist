@@ -22,7 +22,7 @@ app.add_middleware(
 
 app.include_router(todos.router, prefix="/todos", tags=["todos"])
 app.include_router(todolists.router, prefix="/todolists", tags=["todolists"])
-app.include_router(categories.router, prefix="/category", tags=["category"])
+app.include_router(categories.router, prefix="/categories", tags=["categories"])
 
 # Route de test optionnelle
 @app.get("/")

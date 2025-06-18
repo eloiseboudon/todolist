@@ -1,15 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas import CategoryCreate
-from sqlalchemy import func
+from app.schemas import Category, CategoryCreate, CategoryUpdate
 from app.db import models
 from app.db.session import get_db
 from typing import List
-from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
-@router.get("/", response_model=List[CategoryCreate]) 
+@router.get("/", response_model=List[Category])
 def get_categories(db: Session = Depends(get_db)):
-    """Récupérer toutes les catgories"""
-    return db.query(models.Category).order_by(models.Category.id).all()
+    """Récupérer toutes les catégories"""
+    categories = db.query(models.Category).all()
+    return categories

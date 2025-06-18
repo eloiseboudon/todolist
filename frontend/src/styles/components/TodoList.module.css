@@ -1,140 +1,187 @@
-/* TodoList.module.css - Version avec variables */
+/* TodoList.module.css - Version compacte et moderne */
 
 .todoList {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--spacing-lg);
-}
-
-/* ===== EN-TÊTE AMÉLIORÉ ===== */
-.todoListHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-hover) 100%);
-  border-radius: var(--radius-xl);
+  /* max-width: 800px; */
+  /* margin: 0 auto; */
+  padding: var(--spacing-xl);
+  /* min-width: 80%; */
   border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+}
+
+/* ===== EN-TÊTE COMPACT ET MODERNE ===== */
+.todoListHeader {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
 }
 
+.todoListHeader:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+/* 🎯 NOUVEAU : Ligne titre avec badges sur la même ligne */
 .titleSection {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+  flex: 1;
 }
 
-.titleSection h2 {
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.titleRow h2 {
   color: var(--text-primary);
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  flex-shrink: 0;
 }
 
-.todoCount {
-  color: var(--text-secondary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-}
-
-.mainActions {
+.headerBadges {
   display: flex;
-  gap: var(--spacing-md);
   align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
-/* ===== BOUTONS PRINCIPAUX ===== */
-.btnAdd {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-  color: var(--text-white);
-  border: none;
-  padding: var(--spacing-md) var(--spacing-lg);
+/* 🎯 NOUVEAU : Badges stylisés */
+.categoryBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.categoryIcon {
+  font-size: var(--font-size-sm);
+}
+
+.countBadge {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid var(--border-color);
+}
+
+/* 🎯 NOUVEAU : Actions header avec boutons fins */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  position: relative;
+}
+
+.btnCompact {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
-  box-shadow: 0 2px 4px color-mix(in srgb, var(--primary-color) 20%, transparent);
+  white-space: nowrap;
+  min-height: 36px;
 }
 
-.btnAdd:hover {
-  background: linear-gradient(135deg, var(--primary-hover) 0%, #3730a3 100%);
+.btnCompact svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.btnCompact:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px color-mix(in srgb, var(--primary-color) 30%, transparent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.btnAdd:active {
+.btnCompact:active {
   transform: translateY(0);
 }
 
-/* ===== MENU D'EXPORT DROPDOWN ===== */
+/* Variantes de boutons */
+.btnSecondary {
+  background: var(--success-light);
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.btnSecondary:hover {
+  background: var(--success-color);
+  color: white;
+}
+
+.btnTertiary {
+  background: var(--warning-light);
+  border-color: var(--warning-color);
+  color: var(--warning-color);
+}
+
+.btnTertiary:hover {
+  background: var(--warning-color);
+  color: white;
+}
+
+.btnTertiary:disabled {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ===== MENU DROPDOWN (compact) ===== */
 .exportDropdown {
   position: relative;
 }
 
-.btnExport {
-  background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-  color: var(--text-white);
-  border: none;
-  padding: var(--spacing-md) var(--spacing-md);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  box-shadow: 0 2px 4px color-mix(in srgb, var(--success-color) 20%, transparent);
-  min-width: 120px;
-  justify-content: center;
-}
-
-.btnExportMain {
-  justify-content: space-between;
-  padding-right: var(--spacing-md);
-}
-
-.btnExport:hover:not(:disabled) {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px color-mix(in srgb, var(--success-color) 30%, transparent);
-}
-
-.btnExport:disabled {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-hover) 100%);
-  color: var(--text-muted);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: var(--shadow-sm);
-}
-
 .dropdownIcon {
-  font-size: var(--font-size-xs);
-  transition: transform var(--transition-fast);
+  font-size: 10px;
   margin-left: var(--spacing-xs);
+  transition: transform var(--transition-fast);
 }
 
 .dropdownOpen {
   transform: rotate(180deg);
 }
 
-/* ===== MENU DROPDOWN ===== */
 .exportMenu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + var(--spacing-xs));
   right: 0;
-  margin-top: var(--spacing-sm);
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   z-index: 1000;
-  min-width: 200px;
+  min-width: 180px;
   overflow: hidden;
   animation: dropdownFadeIn 0.15s ease-out;
 }
@@ -142,8 +189,9 @@
 @keyframes dropdownFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-8px) scale(0.95);
+    transform: translateY(-4px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -154,139 +202,39 @@
   width: 100%;
   background: none;
   border: none;
-  padding: var(--spacing-md) var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   text-align: left;
   cursor: pointer;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
   color: var(--text-primary);
-  transition: all var(--transition-fast);
+  transition: background var(--transition-fast);
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
 }
 
-.exportMenuItem:hover:not(:disabled) {
+.exportMenuItem:hover {
   background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-.exportMenuItem:disabled {
-  color: var(--text-muted);
-  cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .exportMenuItem:not(:last-child) {
-  border-bottom: 1px solid var(--bg-hover);
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* ===== FORMULAIRE D'AJOUT ===== */
-.addTodoForm {
-  display: flex;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background: linear-gradient(135deg, #fef7ff 0%, #faf5ff 100%);
-  border: 1px solid #e9d5ff;
-  border-radius: var(--radius-xl);
-  animation: formSlideIn var(--transition-normal) ease-out;
-}
-
-@keyframes formSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.todoInput {
-  flex: 1;
-  padding: var(--spacing-md) var(--spacing-md);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  font-size: var(--font-size-sm);
-  transition: all var(--transition-fast);
-  background: var(--bg-primary);
-}
-
-.todoInput:focus {
-  outline: none;
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 10%, transparent);
-}
-
-.btnConfirm {
-  background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-  color: var(--text-white);
-  border: none;
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
-  transition: all var(--transition-fast);
-  box-shadow: 0 2px 4px color-mix(in srgb, var(--success-color) 20%, transparent);
-}
-
-.btnConfirm:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px color-mix(in srgb, var(--success-color) 30%, transparent);
-}
-
-.btnCancel {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-hover) 100%);
-  color: var(--text-white);
-  border: none;
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
-  transition: all var(--transition-fast);
-  box-shadow: 0 2px 4px color-mix(in srgb, var(--secondary-color) 20%, transparent);
-}
-
-.btnCancel:hover {
-  background: linear-gradient(135deg, var(--secondary-hover) 0%, #374151 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px color-mix(in srgb, var(--secondary-color) 30%, transparent);
-}
-
-/* ===== HINT DRAG & DROP ===== */
-.dragHint {
-  background: linear-gradient(135deg, var(--primary-light) 0%, #dbeafe 100%);
-  border: 1px solid #bfdbfe;
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-md) var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-  color: #1e40af;
-  font-size: var(--font-size-sm);
-  text-align: center;
-  animation: hintPulse 2s ease-in-out infinite;
-}
-
-@keyframes hintPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
-}
-
-/* ===== CONTENEUR TODOS ===== */
+/* ===== CONTENEUR TODOS (largeur alignée) ===== */
 .todosContainer {
-  margin-top: var(--spacing-md);
-  transition: opacity var(--transition-fast);
+  /* 🎯 CORRIGÉ : Même largeur que le header */
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .sortableList {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
-  transition: all var(--transition-fast);
 }
 
 .draggableItem {
@@ -304,15 +252,22 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+.draggableItem:active {
+  cursor: grabbing;
+  transform: scale(1.01);
+  transition: transform 0.1s ease;
+}
+
 /* ===== CLASSES SORTABLE.JS ===== */
 .sortableGhost {
-  opacity: 0.5;
+  opacity: 0.4;
   background: linear-gradient(135deg, var(--bg-hover) 0%, var(--border-color) 100%);
   border: 2px dashed var(--text-muted);
   transform: scale(0.98);
@@ -325,78 +280,23 @@
 }
 
 .sortableDrag {
-  transform: rotate(3deg) scale(1.05);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  transform: rotate(2deg) scale(1.03);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
   z-index: 1000;
   opacity: 0.9;
 }
 
-/* ===== ANIMATIONS D'ÉTATS ===== */
-.draggableItem.leaving {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all var(--transition-fast);
-}
-
-.draggableItem.updating {
-  opacity: 0.7;
-  transform: scale(0.98);
-  transition: all var(--transition-fast);
-}
-
-.draggableItem.modified {
-  animation: modificationPulse 0.6s ease-out;
-}
-
-@keyframes modificationPulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 40%, transparent);
-  }
-  50% {
-    transform: scale(1.02);
-    box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary-color) 10%, transparent);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 0%, transparent);
-  }
-}
-
-/* ===== SKELETON LOADING ===== */
-.todoSkeleton {
-  height: 60px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
+/* ===== HINT DRAG & DROP (compact) ===== */
+.dragHint {
+  background: linear-gradient(135deg, var(--primary-light) 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
   border-radius: var(--radius-lg);
-  margin-bottom: var(--spacing-sm);
-}
-
-@keyframes loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.todosContainer.updating {
-  position: relative;
-}
-
-.todosContainer.updating::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.3);
-  z-index: 1;
-  opacity: 0;
-  animation: fadeInOverlay var(--transition-fast) forwards;
-}
-
-@keyframes fadeInOverlay {
-  to { opacity: 1; }
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  color: #1e40af;
+  font-size: var(--font-size-xs);
+  text-align: center;
+  font-weight: var(--font-weight-medium);
 }
 
 /* ===== ÉTAT VIDE ===== */
@@ -406,113 +306,110 @@
   color: var(--text-secondary);
   background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-hover) 100%);
   border-radius: var(--radius-xl);
-  border: 2px dashed var(--border-hover);
+  border: 1px solid var(--border-color);
+  margin-top: var(--spacing-md);
 }
 
 .emptyIcon {
   font-size: var(--font-size-3xl);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   opacity: 0.7;
-  animation: emptyBounce 3s ease-in-out infinite;
-}
-
-@keyframes emptyBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
 }
 
 .emptyState p:first-of-type {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--spacing-sm);
   color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
 }
 
 .emptyState p:last-of-type {
-  font-size: var(--font-size-sm);
   color: var(--text-secondary);
+  margin: 0;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
   .todoList {
     padding: var(--spacing-md);
   }
 
-  .todoListHeader {
+  .titleRow {
     flex-direction: column;
-    gap: var(--spacing-md);
-    align-items: stretch;
-    text-align: center;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
   }
 
-  .mainActions {
-    justify-content: center;
-  }
-
-  .addTodoForm {
-    flex-direction: column;
-    gap: var(--spacing-md);
-  }
-
-  .btnConfirm, .btnCancel {
+  .headerActions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
     width: 100%;
   }
 
-  .dragHint {
-    font-size: var(--font-size-xs);
-    padding: var(--spacing-sm);
+  .btnCompact {
+    flex: 1;
+    min-width: 100px;
+    justify-content: center;
   }
 
   .exportMenu {
     right: auto;
     left: 0;
-    min-width: 180px;
   }
 }
 
 @media (max-width: 480px) {
-  .titleSection h2 {
-    font-size: var(--font-size-lg);
+  .headerBadges {
+    width: 100%;
+    justify-content: space-between;
   }
 
-  .btnAdd, .btnExport {
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: var(--font-size-xs);
+  .headerActions {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--spacing-sm);
   }
 
-  .exportMenuItem {
-    padding: var(--spacing-sm) var(--spacing-sm);
-    font-size: var(--font-size-xs);
+  .btnCompact {
+    width: 100%;
   }
-}
 
-/* ===== ANIMATIONS D'ENTRÉE ===== */
-.todoList {
-  animation: listFadeIn var(--transition-slow) ease-out;
-}
-
-@keyframes listFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .exportMenu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 250px;
+    max-width: 90vw;
   }
 }
 
-/* ===== FOCUS STATES AMÉLIORÉS ===== */
-.btnAdd:focus,
-.btnExport:focus,
-.btnConfirm:focus,
-.btnCancel:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
+/* ===== FOCUS STATES ===== */
+.btnCompact:focus-visible,
+.exportMenuItem:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
-.exportMenuItem:focus {
-  outline: none;
-  background: var(--bg-hover);
+/* ===== SUPPORT MOUVEMENT RÉDUIT ===== */
+@media (prefers-reduced-motion: reduce) {
+
+  .draggableItem,
+  .exportMenu,
+  .dragHint,
+  .btnCompact {
+    animation: none;
+    transition: none;
+  }
+
+  .draggableItem:active,
+  .btnCompact:hover {
+    transform: none;
+  }
+
+  .sortableGhost,
+  .sortableChosen,
+  .sortableDrag {
+    transform: none;
+  }
 }

@@ -1,17 +1,28 @@
 // Types pour l'API
+
+export interface Category {
+  id: number;
+  name: string;
+  color: string;
+  icon: string;
+}
+
+
 export interface Todo {
   id: number;
   name: string;
   completed: boolean;
   priority: number;
-  todolist_id?: number; 
-  todolist : TodoList;
+  todolist_id?: number;
+  todolist: TodoList;
 }
 
 export interface TodoList {
   id: number;
   name: string;
   todos?: Todo[];
+  category_id?: number;
+  category?: Category;
 }
 
 export interface CreateTodoRequest {
@@ -23,13 +34,14 @@ export interface CreateTodoRequest {
 export interface CreateTodoListRequest {
   name: string;
   todos?: CreateTodoRequest[];
+  category_id?: number; 
 }
 
 export interface UpdateTodoRequest {
   name: string;
   completed?: boolean;
   priority?: number;
-  todolist_id: number; 
+  todolist_id?: number;
 }
 
 // Configuration de base
@@ -57,7 +69,7 @@ async function apiRequest<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   const defaultOptions: RequestInit = {
     headers: {
       'Content-Type': 'application/json',
@@ -73,7 +85,7 @@ async function apiRequest<T>(
       statusText: response.statusText,
       errorData
     });
-    
+
     throw new ApiError(
       errorData?.detail || `HTTP ${response.status}: ${response.statusText}`,
       response.status,
@@ -139,6 +151,33 @@ export const todoListsApi = {
       body: JSON.stringify(todoIds),
     });
   },
+};
+
+
+
+// API Categories (nouveau)
+export const categoriesApi = {
+  // Récupérer toutes les catégories
+  async getAll(): Promise<Category[]> {
+    return apiRequest<Category[]>('/categories/');
+  },
+
+  // Récupérer les catégories actives
+  async getActive(): Promise<Category[]> {
+    return apiRequest<Category[]>('/categories/active');
+  },
+
+  // Récupérer une catégorie par ID
+  async getById(id: number): Promise<Category> {
+    return apiRequest<Category>(`/categories/${id}`);
+  }, 
+
+  async updateCategory(data: CreateTodoListRequest):Promise<Category> {
+    return apiRequest<Category>('/categories/addTodoList', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }, 
 };
 
 // API Todos

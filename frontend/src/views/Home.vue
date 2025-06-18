@@ -52,8 +52,16 @@
 
     <!-- Liste des TodoLists -->
     <div v-if="!loading && todolists.length > 0" :class="styles.todolistsGrid">
-      <div v-for="todolist in todolists" :key="todolist.id" :class="styles.todolistCard"
-        @click="goToTodoList(todolist.id)">
+      
+      <div v-for="todolist in todolists" :key="todolist.id" :class="[
+        styles.todolistCard,
+        todolist.category ? styles.todolistCardWithCategory : styles.todolistCardDefault
+      ]" :style="todolist.category ? {
+      '--category-color': todolist.category.color,
+      '--category-color-light': todolist.category.color + '15',
+      '--category-color-hover': todolist.category.color + '25'
+    } : {}" @click="goToTodoList(todolist.id)">
+
         <div :class="styles.cardHeader">
           <h3>{{ todolist.name }}</h3>
           <button @click.stop="handleDeleteTodoList(todolist.id)" :class="styles.btnDelete"
@@ -70,7 +78,19 @@
           <p>{{ todolist.todos?.length || 0 }} todo(s)</p>
           <p>Cliquez pour ouvrir →</p>
         </div>
+
+        <div v-if="todolist.category" :class="styles.categoryBadge">
+          <span :class="styles.categoryIcon" :style="{ color: todolist.category.color }">
+            {{ getCategoryIcon(todolist.category.icon) }}
+          </span>
+          <!-- <span :class="styles.categoryName">{{ todolist.category.name }}</span> -->
+        </div>
+        <div v-else :class="styles.noCategoryBadge">
+          <span :class="styles.categoryIcon">📁</span>
+          <span :class="styles.categoryName">Aucune catégorie</span>
+        </div>
       </div>
+
     </div>
 
     <!-- État vide -->
@@ -97,6 +117,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTodos } from '@/composables/useTodos';
 import styles from '@/styles/views/Home.module.css';
+import { getCategoryIcon } from '@/composables/useCategory';
 
 const router = useRouter();
 
@@ -119,6 +140,7 @@ const newTodoListName = ref('');
 onMounted(() => {
   loadTodoLists();
 });
+
 
 // Actions
 const handleCreateTodoList = async () => {

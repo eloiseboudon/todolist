@@ -44,6 +44,10 @@ def create_todolist(todolist: TodoListCreate, db: Session = Depends(get_db)):
     try:
         # Créer la todolist
         db_todolist = models.TodoList(name=todolist.name)
+        
+        if todolist.category_id is not None:
+            db_todolist.category_id = todolist.category_id
+
         db.add(db_todolist)
         db.commit()
         db.refresh(db_todolist)
@@ -113,6 +117,9 @@ def update_todolist(todolist_id: int, todolist_update: TodoListUpdate, db: Sessi
         # Mettre à jour uniquement les champs fournis
         if todolist_update.name is not None:
             db_todolist.name = todolist_update.name
+        
+        if todolist_update.category_id is not None:
+            db_todolist.category_id = todolist_update.category_id
         
         db.commit()
         db.refresh(db_todolist)

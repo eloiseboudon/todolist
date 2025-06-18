@@ -1,14 +1,13 @@
 <template>
-  <div class="container">
-    <!-- Bouton retour -->
+  <div :class="styles.container">
+    <!-- Bouton retour stylisé -->
     <div :class="styles.backButton">
       <router-link to="/" :class="styles.btnBack">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="size-6">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round"
             d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
-        Retour
+        Retour à l'accueil
       </router-link>
     </div>
 
@@ -34,9 +33,9 @@
       </router-link>
     </div>
 
-    <!-- Contenu principal -->
-  <div v-if="!loading && currentTodolist" :class="styles.content">
-      <!-- 🎯 MODIFIÉ : Ajout du paramètre priority dans l'événement -->
+    <!-- 🎯 CONTENU PRINCIPAL AVEC LAYOUT AMÉLIORÉ -->
+    <div v-if="!loading && currentTodolist" :class="styles.content">
+      <!-- TodoList avec header compact et liste alignée -->
       <TodoList 
         :todolist="currentTodolist" 
         :todos="sortedTodos" 
@@ -45,17 +44,21 @@
         @editTodo="handleEditTodo" 
         @deleteTodo="handleDeleteTodo" 
         @reorderTodos="handleReorderTodos" 
+        @categoryUpdated="handleCategoryUpdated"
       />
-      <!-- Statistiques -->
+      
+      <!-- 🎯 STATISTIQUES STYLISÉES EN CARRÉS -->
       <div :class="styles.stats">
         <div :class="styles.statCard">
           <span :class="styles.statNumber">{{ currentTodos.length }}</span>
           <span :class="styles.statLabel">Total</span>
         </div>
+        
         <div :class="styles.statCard">
           <span :class="styles.statNumber">{{ completedTodos.length }}</span>
           <span :class="styles.statLabel">Terminées</span>
         </div>
+        
         <div :class="styles.statCard">
           <span :class="styles.statNumber">{{ pendingTodos.length }}</span>
           <span :class="styles.statLabel">En cours</span>
@@ -69,7 +72,7 @@
 import { onMounted, watch } from 'vue';
 import TodoList from '@/components/TodoList.vue';
 import { useTodos } from '@/composables/useTodos';
-import type { Todo } from '@/services/api';
+import type { Todo, TodoList as TodoListType } from '@/services/api';
 import styles from '@/styles/views/TodoListDetail.module.css';
 
 interface Props {
@@ -117,21 +120,6 @@ const handleAddTodoWithPriority = async (name: string, priority?: number) => {
   }
 };
 
-// Handlers
-const handleAddTodo = async (name: string) => {
-  try {
-    await addTodo(parseInt(props.id), name);
-  } catch (err) {
-    console.error('Erreur ajout todo - Détail complet:', err);
-    if (err instanceof Error) {
-      console.error('Message:', err.message);
-      console.error('Stack:', err.stack);
-    }
-    // Afficher l'objet complet
-    console.error('Erreur complète:', JSON.stringify(err, null, 2));
-  }
-};
-
 const handleToggleTodo = async (id: number) => {
   const todo = currentTodos.value.find(t => t.id === id);
   if (todo) {
@@ -143,6 +131,7 @@ const handleToggleTodo = async (id: number) => {
   }
 };
 
+// 🎯 CORRIGÉ : Fonction handleEditTodo avec todolist_id
 const handleEditTodo = async (todo: Todo) => {
   const newName = prompt('Nouveau nom:', todo.name);
   if (newName && newName.trim() !== todo.name) {
@@ -150,12 +139,18 @@ const handleEditTodo = async (todo: Todo) => {
       await updateTodo(todo.id, {
         name: newName.trim(),
         completed: todo.completed,
-        priority: todo.priority
+        priority: todo.priority,
+        todolist_id: parseInt(props.id) // 🎯 Ajout du todolist_id requis
       });
     } catch (err) {
       console.error('Erreur édition todo:', err);
     }
   }
+};
+
+// NOUVEAU : Gestionnaire de mise à jour de catégorie
+const handleCategoryUpdated = (updatedTodolist: TodoListType) => {
+  currentTodolist.value = updatedTodolist; // Direct et simple
 };
 
 const handleDeleteTodo = async (id: number) => {

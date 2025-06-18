@@ -72,8 +72,11 @@ migrate-auto:
 		exit 1; \
 	fi
 	$(call run-in-venv, alembic revision --autogenerate -m "$(msg)")
+	
+migrate-check:
+	$(call run-in-venv, alembic check)
 
-migrate-up:
+migrate-update:
 	$(call run-in-venv, alembic upgrade head)
 
 migrate-down:
@@ -84,6 +87,43 @@ migrate-history:
 
 migrate-current:
 	$(call run-in-venv, alembic current)
+
+migrate-stamp:
+	@if [ -z "$(version)" ]; then \
+		echo "❌ Veuillez fournir une version: make migrate-stamp version='c37b2110c125'"; \
+		exit 1; \
+	fi
+	$(call run-in-venv, alembic stamp $(version))
+
+migrate-show:
+	@if [ -z "$(version)" ]; then \
+		echo "❌ Veuillez fournir une version: make migrate-show version='head'"; \
+		exit 1; \
+	fi
+	$(call run-in-venv, alembic show $(version))
+
+migrate-sql:
+	@if [ -z "$(target)" ]; then \
+		echo "❌ Veuillez fournir une cible: make migrate-sql target='head'"; \
+		exit 1; \
+	fi
+	$(call run-in-venv, alembic upgrade $(target) --sql)
+
+# Nettoyage de la base pour les catégories
+clean-categories:
+	@echo "🧹 Suppression des éléments categories de la base..."
+	psql -d $(DB_NAME) -c "DROP TABLE IF EXISTS categories CASCADE;"
+	psql -d $(DB_NAME) -c "ALTER TABLE todos DROP COLUMN IF EXISTS category_id;"
+	@echo "✅ Nettoyage terminé"
+
+# Reset complet des migrations (ATTENTION: supprime toutes les données)
+migrate-reset:
+	@echo "⚠️  ATTENTION: Cette commande va supprimer toutes les données!"
+	@read -p "Êtes-vous sûr? (y/N): " confirm && [ "$$confirm" = "y" ]
+	$(call run-in-venv, alembic downgrade base)
+	$(call run-in-venv, alembic upgrade head)
+	@echo "🔄 Reset des migrations terminé"
+
 
 # Tests
 test:

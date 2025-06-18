@@ -13,6 +13,10 @@ class TodoList(Base):
     
     # Relations
     todos = relationship("Todo", back_populates="todolist", cascade="all, delete-orphan")
+    category = relationship("Category", back_populates="todos")
+    # Foreign Keys
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
+    
 
 
 class Category(Base):
@@ -27,7 +31,7 @@ class Category(Base):
     created_at = Column(DateTime, server_default=func.now())
     
     # Relations
-    todos = relationship("Todo", back_populates="category")
+    todolist = relationship("TodoList", back_populates="category")
 
     def __repr__(self):
         return f"<Category(name='{self.name}', color='{self.color}')>"
@@ -46,11 +50,9 @@ class Todo(Base):
     
     # Foreign Keys
     todolist_id = Column(Integer, ForeignKey("todolist.id"), nullable=False)
-    category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     
     # Relations
     todolist = relationship("TodoList", back_populates="todos")
-    category = relationship("Category", back_populates="todos")
 
     def __repr__(self):
         return f"<Todo(name='{self.name}', completed={self.completed})>"

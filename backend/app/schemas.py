@@ -1,6 +1,54 @@
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import List, Optional, Any
 
+
+
+# Categories 
+class CategoryBase(BaseModel):
+    name: str = Field(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Nom de la catégorie"
+    )
+    color: str = Field(
+        default="#3B82F6",
+        pattern=r"^#[0-9A-Fa-f]{6}$",  # Validation couleur hex
+        description="Couleur de la catégorie"
+    )
+    icon: str = Field(
+        default="folder",
+        max_length=50,
+        description="Icône de la catégorie"
+    )
+    
+    @field_validator('name')
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        cleaned = v.strip()
+        if not cleaned:
+            raise ValueError('Le nom ne peut pas être vide')
+        return cleaned
+
+class CategoryCreate(CategoryBase):
+    """Pour créer une catégorie (sans id)"""
+    pass
+
+class CategoryUpdate(BaseModel):
+    """Pour mettre à jour une catégorie"""
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
+    icon: Optional[str] = Field(None, max_length=50)
+
+class Category(CategoryBase):
+    """Modèle de réponse avec id"""
+    id: int = Field(..., gt=0, description="Identifiant unique")
+    
+    class Config:
+        from_attributes = True
+
+
+
 class TodoBase(BaseModel):
     name: str = Field(
         ..., 
@@ -118,6 +166,11 @@ class TodoListBase(BaseModel):
         max_length=100,
         description="Nom de la liste de tâches"
     )
+    category_id: Optional[int] = Field(
+        None,
+        gt=0,
+        description="ID de la catégorie"
+    )
     
     @field_validator('name')
     @classmethod
@@ -169,7 +222,9 @@ class TodoListUpdate(BaseModel):
         max_length=100,
         description="Nouveau nom de la liste"
     )
-    
+    category_id: Optional[int] = Field(None, gt=0)
+
+
     @field_validator('name')
     @classmethod
     def validate_name(cls, v: Optional[str]) -> Optional[str]:
@@ -199,6 +254,11 @@ class TodoList(TodoListBase):
     todos: List[Todo] = Field(
         default_factory=list,
         description="Liste des tâches"
+    )
+    created_at: str = Field(..., description="Date de création")
+    category: Optional[Category] = Field(
+        None,
+        description="Catégorie associée (si définie)"
     )
 
     class Config:
@@ -234,46 +294,3 @@ class TodoFilter(BaseModel):
         return cleaned
     
     
-# Categories 
-class CategoryBase(BaseModel):
-    name: str = Field(
-        ...,
-        min_length=1,
-        max_length=100,
-        description="Nom de la catégorie"
-    )
-    color: str = Field(
-        default="#3B82F6",
-        pattern=r"^#[0-9A-Fa-f]{6}$",  # Validation couleur hex
-        description="Couleur de la catégorie"
-    )
-    icon: str = Field(
-        default="folder",
-        max_length=50,
-        description="Icône de la catégorie"
-    )
-    
-    @field_validator('name')
-    @classmethod
-    def validate_name(cls, v: str) -> str:
-        cleaned = v.strip()
-        if not cleaned:
-            raise ValueError('Le nom ne peut pas être vide')
-        return cleaned
-
-class CategoryCreate(CategoryBase):
-    """Pour créer une catégorie (sans id)"""
-    pass
-
-class CategoryUpdate(BaseModel):
-    """Pour mettre à jour une catégorie"""
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
-    icon: Optional[str] = Field(None, max_length=50)
-
-class Category(CategoryBase):
-    """Modèle de réponse avec id"""
-    id: int = Field(..., gt=0, description="Identifiant unique")
-    
-    class Config:
-        from_attributes = True

@@ -71,6 +71,33 @@
   transform: translateY(0);
 }
 
+.btnCategory {
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-hover) 100%);
+  color: var(--text-white);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--secondary-color) 20%, transparent);
+}
+
+.btnCategory:hover {
+  background: linear-gradient(135deg, var(--secondary-hover) 0%, #3730a3 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px color-mix(in srgb, var(--secondary-color) 30%, transparent);
+}
+
+.btnCategory:active {
+  transform: translateY(0);
+}
+
+
 /* ===== MENU D'EXPORT DROPDOWN ===== */
 .exportDropdown {
   position: relative;
@@ -90,7 +117,7 @@
   align-items: center;
   gap: var(--spacing-xs);
   box-shadow: 0 2px 4px color-mix(in srgb, var(--success-color) 20%, transparent);
-  min-width: 120px;
+  /* min-width: 120px; */
   justify-content: center;
 }
 

@@ -170,7 +170,14 @@ export const categoriesApi = {
   // Récupérer une catégorie par ID
   async getById(id: number): Promise<Category> {
     return apiRequest<Category>(`/categories/${id}`);
-  }
+  }, 
+
+  async updateCategory(data: CreateTodoListRequest):Promise<Category> {
+    return apiRequest<Category>('/categories/addTodoList', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }, 
 };
 
 // API Todos

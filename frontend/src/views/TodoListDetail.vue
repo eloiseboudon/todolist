@@ -45,6 +45,7 @@
         @editTodo="handleEditTodo" 
         @deleteTodo="handleDeleteTodo" 
         @reorderTodos="handleReorderTodos" 
+        @categoryUpdated="handleCategoryUpdated"
       />
       <!-- Statistiques -->
       <div :class="styles.stats">
@@ -69,7 +70,7 @@
 import { onMounted, watch } from 'vue';
 import TodoList from '@/components/TodoList.vue';
 import { useTodos } from '@/composables/useTodos';
-import type { Todo } from '@/services/api';
+import type { Todo,TodoList as TodoListType } from '@/services/api';
 import styles from '@/styles/views/TodoListDetail.module.css';
 
 interface Props {
@@ -172,6 +173,17 @@ const handleReorderTodos = async (todoIds: number[]) => {
     await reorderTodos(parseInt(props.id), todoIds);
   } catch (err) {
     console.error('Erreur réorganisation todos:', err);
+  }
+};
+
+const handleCategoryUpdated = async (updatedTodolist: TodoListType) => {
+  console.log('📝 [TodoListDetail] Catégorie mise à jour, rechargement...');
+  
+  // Recharger la TodoList complète pour avoir les données à jour
+  try {
+    await loadTodoList(parseInt(props.id));
+  } catch (err) {
+    console.error('Erreur rechargement après mise à jour catégorie:', err);
   }
 };
 

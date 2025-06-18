@@ -256,12 +256,13 @@
   gap: var(--spacing-xs);
   margin-top: var(--spacing-sm);
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--bg-secondary);
+  /* background: var(--bg-secondary); */
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
+  /* border: 1px solid var(--border-color); */
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
   transition: all var(--transition-fast);
+  justify-content: flex-end;
 }
 
 .noCategoryBadge {
@@ -270,9 +271,183 @@
   gap: var(--spacing-xs);
   margin-top: var(--spacing-sm);
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: color-mix(in srgb, var(--border-color) 20%, transparent);
+  /* background: color-mix(in srgb, var(--border-color) 20%, transparent); */
   border-radius: var(--radius-md);
-  border: 1px dashed var(--border-color);
+  /* border: 1px dashed var(--border-color); */
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  font-style: italic;
+    justify-content: flex-end;
+}
+
+.categoryIcon {
+  font-size: var(--font-size-sm);
+  line-height: 1;
+}
+
+.categoryName {
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* Hover effect pour les badges */
+.todolistCard:hover .categoryBadge {
+
+}
+
+.todolistCard:hover .noCategoryBadge {
+
+}
+
+/* Styles à ajouter/remplacer dans Home.module.css */
+
+/* Cartes TodoList avec couleur de catégorie */
+.todolistCard {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Carte avec catégorie - utilise les variables CSS personnalisées */
+.todolistCardWithCategory {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--category-color) 8%, var(--bg-primary)) 0%, 
+    color-mix(in srgb, var(--category-color) 12%, var(--bg-primary)) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--category-color) 30%, var(--border-color));
+  
+  /* Effet de bordure colorée subtile */
+  /* border-left: 4px solid var(--category-color); */
+}
+
+/* Carte sans catégorie - style par défaut */
+.todolistCardDefault {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  /* border-left: 4px solid var(--border-color); */
+}
+
+/* États hover pour cartes avec catégorie */
+.todolistCardWithCategory:hover {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--category-color) 15%, var(--bg-primary)) 0%, 
+    color-mix(in srgb, var(--category-color) 20%, var(--bg-primary)) 100%
+  );
+  border-color: color-mix(in srgb, var(--category-color) 50%, var(--border-color));
+  box-shadow: 
+    var(--shadow-md),
+    0 0 0 1px color-mix(in srgb, var(--category-color) 20%, transparent);
+  transform: translateY(-2px);
+}
+
+/* États hover pour cartes sans catégorie */
+.todolistCardDefault:hover {
+  background: var(--bg-hover);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Header de la carte */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+}
+
+.cardHeader h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+/* Informations de la carte */
+.cardInfo {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.cardInfo p {
+  margin: var(--spacing-xs) 0;
+}
+
+.cardInfo p:last-of-type {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Bouton de suppression adaptatif */
+.btnDelete {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid color-mix(in srgb, var(--error-color) 30%, var(--border-color));
+  color: var(--error-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  opacity: 0.7;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnDelete:hover {
+  background: var(--error-color);
+  color: white;
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.btnDelete svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Badges de catégorie adaptés */
+.categoryBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  /* background: rgba(255, 255, 255, 0.6); */
+  backdrop-filter: blur(8px);
+  /* border: 1px solid rgba(255, 255, 255, 0.3); */
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.todolistCardWithCategory .categoryBadge {
+  /* background: color-mix(in srgb, var(--category-color) 15%, rgba(255, 255, 255, 0.8)); */
+  /* border: 1px solid color-mix(in srgb, var(--category-color) 25%, rgba(255, 255, 255, 0.5)); */
+}
+
+.noCategoryBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  /* background: rgba(255, 255, 255, 0.4); */
+  border-radius: var(--radius-md);
+  /* border: 1px dashed var(--border-color); */
   font-size: var(--font-size-xs);
   color: var(--text-muted);
   font-style: italic;
@@ -291,15 +466,30 @@
   max-width: 120px;
 }
 
-/* Hover effect pour les badges */
-.todolistCard:hover .categoryBadge {
-  background: var(--bg-hover);
-  border-color: var(--primary-color);
+/* Hover effects pour les badges */
+.todolistCardWithCategory:hover .categoryBadge {
+  /* background: color-mix(in srgb, var(--category-color) 25%, rgba(255, 255, 255, 0.9)); */
+  /* border-color: color-mix(in srgb, var(--category-color) 40%, rgba(255, 255, 255, 0.7)); */
 }
 
-.todolistCard:hover .noCategoryBadge {
-  background: color-mix(in srgb, var(--border-color) 30%, transparent);
-  border-color: var(--text-muted);
+.todolistCardDefault:hover .noCategoryBadge {
+  /* background: rgba(255, 255, 255, 0.6); */
+  /* border-color: var(--text-muted); */
+}
+
+/* Responsive pour les cartes */
+@media (max-width: 768px) {
+  .todolistCard {
+    padding: var(--spacing-md);
+  }
+  
+  .cardHeader h3 {
+    font-size: var(--font-size-base);
+  }
+  
+  .categoryName {
+    max-width: 100px;
+  }
 }
 
 @keyframes spin {

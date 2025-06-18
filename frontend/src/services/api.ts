@@ -41,7 +41,7 @@ export interface UpdateTodoRequest {
   name: string;
   completed?: boolean;
   priority?: number;
-  todolist_id: number;
+  todolist_id?: number;
 }
 
 // Configuration de base

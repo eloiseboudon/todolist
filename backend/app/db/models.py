@@ -13,7 +13,7 @@ class TodoList(Base):
     
     # Relations
     todos = relationship("Todo", back_populates="todolist", cascade="all, delete-orphan")
-    category = relationship("Category", back_populates="todos")
+    category = relationship("Category", back_populates="todolist")
     # Foreign Keys
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     

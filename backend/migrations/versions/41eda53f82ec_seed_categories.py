@@ -16,28 +16,28 @@ CATEGORIES_DATA = [
     {
         "name": "Travail",
         "color": "#1E40AF",
-        "icon": "briefcase",
+        "icon": "work",
         "description": "Tâches professionnelles et projets de travail",
         "is_active": True
     },
     {
         "name": "Réunions",
         "color": "#7C3AED",
-        "icon": "users",
+        "icon": "meeting",
         "description": "Rendez-vous, réunions et entretiens",
         "is_active": True
     },
     {
         "name": "Formation",
         "color": "#059669",
-        "icon": "book-open",
+        "icon": "books",
         "description": "Apprentissage et développement professionnel",
         "is_active": True
     },
     {
         "name": "Personnel",
         "color": "#DC2626",
-        "icon": "heart",
+        "icon": "personal",
         "description": "Tâches personnelles et bien-être",
         "is_active": True
     },
@@ -46,14 +46,14 @@ CATEGORIES_DATA = [
         "color": "#F59E0B",
         "icon": "home",
         "description": "Activités et obligations familiales",
-        "is_active": False
+        "is_active": True
     },
     {
         "name": "Amis",
         "color": "#EC4899",
-        "icon": "user-group",
+        "icon": "friends",
         "description": "Activités sociales et amicales",
-        "is_active": False
+        "is_active": True
     },
     {
         "name": "Ménage",
@@ -65,35 +65,36 @@ CATEGORIES_DATA = [
     {
         "name": "Courses",
         "color": "#10B981",
-        "icon": "shopping-cart",
+        "icon": "shopping",
         "description": "Achats et commissions",
         "is_active": True
     },
     {
         "name": "Jardinage",
         "color": "#65A30D",
-        "icon": "leaf",
+        "icon": "garden",
         "description": "Entretien du jardin et plantes",
         "is_active": False
     },
     {
         "name": "Finances",
         "color": "#059669",
-        "icon": "banknotes",
+        "icon": "finance",
         "description": "Gestion financière et comptabilité",
-        "is_active": False
+        "is_active": True
     },
     {
         "name": "Factures",
         "color": "#DC2626",
-        "icon": "receipt-tax",
+        "icon": "receipt",
         "description": "Paiements et factures à régler",
-        "is_active": False
+        "is_active": True
     },
     {
         "name": "Santé",
         "color": "#EF4444",
-        "icon": "heart-pulse",
+        "icon": "health",
+        "is_active": True
     }
 ]
 

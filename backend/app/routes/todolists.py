@@ -47,7 +47,7 @@ def create_todolist(todolist: TodoListCreate, db: Session = Depends(get_db)):
         
         if todolist.category_id is not None:
             db_todolist.category_id = todolist.category_id
-        
+
         db.add(db_todolist)
         db.commit()
         db.refresh(db_todolist)

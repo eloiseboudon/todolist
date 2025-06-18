@@ -255,7 +255,7 @@ class TodoList(TodoListBase):
         default_factory=list,
         description="Liste des tâches"
     )
-    created_at: str = Field(..., description="Date de création")
+    
     category: Optional[Category] = Field(
         None,
         description="Catégorie associée (si définie)"

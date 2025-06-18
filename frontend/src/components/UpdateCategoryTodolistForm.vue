@@ -46,7 +46,6 @@
 
                         <select id="category-select" v-model="selectedCategoryId" :class="styles.categorySelect"
                             :disabled="saving">
-                            <option value="">Aucune catégorie</option>
                             <option v-for="category in categories" :key="category.id" :value="category.id">
                                 {{ getCategoryIcon(category.icon) }} {{ category.name }}
                             </option>

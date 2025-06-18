@@ -69,6 +69,18 @@
         <div :class="styles.cardInfo">
           <p>{{ todolist.todos?.length || 0 }} todo(s)</p>
           <p>Cliquez pour ouvrir →</p>
+
+          <!-- NOUVEAU : Affichage de la catégorie -->
+          <div v-if="todolist.category" :class="styles.categoryBadge">
+            <span :class="styles.categoryIcon" :style="{ color: todolist.category.color }">
+              {{ getCategoryIcon(todolist.category.icon) }}
+            </span>
+            <span :class="styles.categoryName">{{ todolist.category.name }}</span>
+          </div>
+          <div v-else :class="styles.noCategoryBadge">
+            <span :class="styles.categoryIcon">📁</span>
+            <span :class="styles.categoryName">Aucune catégorie</span>
+          </div>
         </div>
       </div>
     </div>
@@ -119,6 +131,34 @@ const newTodoListName = ref('');
 onMounted(() => {
   loadTodoLists();
 });
+
+// Fonction pour obtenir l'icône de la catégorie
+const getCategoryIcon = (iconName: string): string => {
+  const iconMap: Record<string, string> = {
+    'folder': '📁',
+    'work': '💼',
+    'personal': '👤',
+    'shopping': '🛒',
+    'health': '🏥',
+    'education': '🎓',
+    'travel': '✈️',
+    'home': '🏠',
+    'finance': '💰',
+    'hobbies': '🎨',
+    'family': '👨‍👩‍👧‍👦',
+    'sport': '⚽',
+    'music': '🎵',
+    'books': '📚',
+    'tech': '💻',
+    'food': '🍔',
+    'car': '🚗',
+    'pets': '🐕',
+    'garden': '🌱',
+    'default': '📋'
+  };
+  
+  return iconMap[iconName] || iconMap['default'];
+};
 
 // Actions
 const handleCreateTodoList = async () => {

@@ -246,6 +246,62 @@
   background: var(--border-color);
 }
 
+
+/* Styles à ajouter dans Home.module.css */
+
+/* Badges de catégorie */
+.categoryBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.noCategoryBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: color-mix(in srgb, var(--border-color) 20%, transparent);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-color);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.categoryIcon {
+  font-size: var(--font-size-sm);
+  line-height: 1;
+}
+
+.categoryName {
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* Hover effect pour les badges */
+.todolistCard:hover .categoryBadge {
+  background: var(--bg-hover);
+  border-color: var(--primary-color);
+}
+
+.todolistCard:hover .noCategoryBadge {
+  background: color-mix(in srgb, var(--border-color) 30%, transparent);
+  border-color: var(--text-muted);
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);

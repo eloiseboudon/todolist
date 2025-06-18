@@ -150,7 +150,8 @@ const handleEditTodo = async (todo: Todo) => {
       await updateTodo(todo.id, {
         name: newName.trim(),
         completed: todo.completed,
-        priority: todo.priority
+        priority: todo.priority,
+        todolist_id: parseInt(props.id)
       });
     } catch (err) {
       console.error('Erreur édition todo:', err);

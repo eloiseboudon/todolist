@@ -118,6 +118,9 @@ def update_todolist(todolist_id: int, todolist_update: TodoListUpdate, db: Sessi
         if todolist_update.name is not None:
             db_todolist.name = todolist_update.name
         
+        if todolist_update.category_id is not None:
+            db_todolist.category_id = todolist_update.category_id
+        
         db.commit()
         db.refresh(db_todolist)
         return db_todolist

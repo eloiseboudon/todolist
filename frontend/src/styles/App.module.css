@@ -24,18 +24,6 @@
   height: 64px;
 }
 
-/* 
-.logo {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--primary-color) !important;
-  text-decoration: none;
-}
-
-.logo:hover {
-  color: var(--primary-hover) !important;
-} */
-
 .navLinks {
   display: flex;
   gap: var(--spacing-lg);
@@ -130,6 +118,7 @@
   border-radius: var(--radius-lg);
 }
 
+
 .btnDismiss,
 .btnRetry {
   background: var(--error-color);
@@ -141,20 +130,10 @@
   margin: 0 var(--spacing-xs);
 }
 
-/* .btnDelete svg {
-  width: 16px;
-  height: 16px;
-  transition: transform var(--transition-fast);
-} */
-
 .btnDelete:hover {
   background: var(--error-light);
   transform: scale(1.1);
 }
-
-/* .btnDelete:hover svg {
-  transform: rotate(15deg);
-} */
 
 .btnDelete:focus {
   outline: 2px solid var(--primary-color);

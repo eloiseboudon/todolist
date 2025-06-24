@@ -26,21 +26,90 @@
       </div>
     </div>
 
-    <div :class="styles.searchBar">
-      <input v-model="searchTerm" type="text" placeholder="Rechercher un todo dans toutes les listes..."
-        :class="styles.searchInput" />
+<div :class="styles.searchBar">
+    <div :class="styles.searchInputWrapper">
+      <svg :class="styles.searchIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+      </svg>
+      <input 
+        v-model="searchTerm" 
+        type="text" 
+        placeholder="Rechercher dans toutes vos listes..." 
+        :class="styles.searchInput"
+      />
+      <button 
+        v-if="searchTerm.length > 0" 
+        @click="searchTerm = ''"
+        :class="styles.clearButton"
+        title="Effacer la recherche"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 🎯 RÉSULTATS DE RECHERCHE GROUPÉS PAR TODOLIST -->
+  <div v-if="searchTerm.length >= 2" :class="styles.searchResults">
+    <div :class="styles.searchHeader">
+      <h3>🔍 Résultats de recherche</h3>
+      <span :class="styles.searchStats">
+        {{ todoListsWithMatches.length }} liste(s) • {{ totalMatchingTodos }} todo(s)
+      </span>
     </div>
 
-    <div v-if="searchTerm.length >= 2" :class="styles.searchResults">
-      <h3>Résultats de la recherche ({{ filteredTodos.length }})</h3>
-      <ul>
-        <li v-for="todo in filteredTodos" :key="todo.id">
-          {{ todo.name }} 
-          <span class="list-name">({{ todo.todolist?.name || 'Liste inconnue' }})</span>
-        </li>
-      </ul>
-      <div v-if="filteredTodos.length === 0">Aucun résultat.</div>
+    <div v-if="todoListsWithMatches.length === 0" :class="styles.noResults">
+      <div :class="styles.noResultsIcon">🤷‍♀️</div>
+      <p><strong>Aucun résultat trouvé</strong></p>
+      <p>Essayez avec d'autres mots-clés</p>
     </div>
+
+    <div v-else :class="styles.searchResultsList">
+      <div 
+        v-for="result in todoListsWithMatches" 
+        :key="result.todolist.id"
+        :class="styles.searchResultCard"
+        @click="goToTodoList(result.todolist.id)"
+      >
+        <!-- En-tête de la TodoList -->
+        <div :class="styles.resultHeader">
+          <div :class="styles.resultTitleSection">
+            <h4 :class="styles.resultTitle">{{ result.todolist.name }}</h4>
+            <div v-if="result.todolist.category" :class="styles.resultCategoryBadge">
+              <span :class="styles.resultCategoryIcon" :style="{ color: result.todolist.category.color }">
+                {{ getCategoryIcon(result.todolist.category.icon) }}
+              </span>
+              <span>{{ result.todolist.category.name }}</span>
+            </div>
+          </div>
+          <span :class="styles.resultCount">{{ result.matchingTodos.length }} résultat(s)</span>
+        </div>
+
+        <!-- Liste des todos trouvés -->
+        <div :class="styles.resultTodos">
+          <div 
+            v-for="todo in result.matchingTodos" 
+            :key="todo.id"
+            :class="[styles.resultTodo, { [styles.completed]: todo.completed }]"
+          >
+            <span :class="styles.todoStatus">
+              {{ todo.completed ? '✅' : '⏳' }}
+            </span>
+            <span :class="styles.todoName" v-html="highlightMatch(todo.name)"></span>
+            <span :class="styles.todoPriority">
+              P{{ todo.priority }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Action -->
+        <div :class="styles.resultAction">
+          <span>Cliquer pour ouvrir →</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <!-- Formulaire de création -->
     <div v-if="showCreateForm" :class="styles.createForm">
@@ -241,6 +310,74 @@ const filteredTodos = computed(() => {
     return todoName.toLowerCase().includes(searchTerm.value.toLowerCase());
   });
 });
+
+const todoListsWithMatches = computed(() => {
+  if (!searchTerm.value || searchTerm.value.length < 2) {
+    return [];
+  }
+
+  const searchQuery = searchTerm.value.toLowerCase();
+  const results: { todolist: TodoList; matchingTodos: any[] }[] = [];
+
+  // Grouper les todos par TodoList
+  const todosByList = new Map();
+  
+  allTodos.value.forEach(todo => {
+    if (!todo.todolist) return;
+    
+    const listId = todo.todolist.id;
+    if (!todosByList.has(listId)) {
+      todosByList.set(listId, {
+        todolist: todo.todolist,
+        matchingTodos: []
+      });
+    }
+    
+    // Vérifier si le todo correspond à la recherche
+    if (todo.name && todo.name.toLowerCase().includes(searchQuery)) {
+      todosByList.get(listId).matchingTodos.push(todo);
+    }
+  });
+
+  // Convertir en array et filtrer les listes sans résultats
+  todosByList.forEach((listData, listId) => {
+    if (listData.matchingTodos.length > 0) {
+      // Trier les todos par priorité
+      listData.matchingTodos.sort((a: any, b: any) => a.priority - b.priority);
+      results.push(listData);
+    }
+  });
+
+  // Trier les TodoLists par nombre de résultats (plus de résultats en premier)
+  return results.sort((a, b) => b.matchingTodos.length - a.matchingTodos.length);
+});
+
+const totalMatchingTodos = computed(() => {
+  return todoListsWithMatches.value.reduce((total, result) => 
+    total + result.matchingTodos.length, 0
+  );
+});
+
+// ✨ FONCTION POUR SURLIGNER LES CORRESPONDANCES
+const highlightMatch = (text: string) => {
+  if (!searchTerm.value || searchTerm.value.length < 2) {
+    return text;
+  }
+  
+  const query = searchTerm.value.toLowerCase();
+  const lowerText = text.toLowerCase();
+  const index = lowerText.indexOf(query);
+  
+  if (index === -1) {
+    return text;
+  }
+  
+  return text.substring(0, index) + 
+         '<mark class="search-highlight">' + 
+         text.substring(index, index + query.length) + 
+         '</mark>' + 
+         text.substring(index + query.length);
+};
 
 const testApiConnection = async () => {
   const isConnected = await testConnection();

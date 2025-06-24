@@ -434,10 +434,6 @@
   transition: all var(--transition-fast);
 }
 
-.todolistCardWithCategory .categoryBadge {
-  /* background: color-mix(in srgb, var(--category-color) 15%, rgba(255, 255, 255, 0.8)); */
-  /* border: 1px solid color-mix(in srgb, var(--category-color) 25%, rgba(255, 255, 255, 0.5)); */
-}
 
 .noCategoryBadge {
   display: flex;
@@ -475,6 +471,343 @@
 .todolistCardDefault:hover .noCategoryBadge {
   /* background: rgba(255, 255, 255, 0.6); */
   /* border-color: var(--text-muted); */
+}
+
+
+/* AJOUTEZ ces styles à la fin de votre fichier Home.module.css */
+
+/* ===== STYLES DE RECHERCHE MODERNES ===== */
+
+/* Barre de recherche */
+.searchBar {
+  margin-bottom: var(--spacing-xl);
+  position: relative;
+}
+
+.searchInputWrapper {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.searchInput {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-md) 3rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-base);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 
+    0 0 0 3px color-mix(in srgb, var(--primary-color) 10%, transparent),
+    0 4px 12px -2px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.searchInput::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+}
+
+.clearButton {
+  position: absolute;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-secondary);
+  border: none;
+  border-radius: var(--radius-full);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-muted);
+}
+
+.clearButton:hover {
+  background: var(--text-muted);
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.clearButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Résultats de recherche */
+.searchResults {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.searchHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.searchHeader h3 {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+.searchStats {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* État vide */
+.noResults {
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-md);
+  color: var(--text-secondary);
+}
+
+.noResultsIcon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.noResults p {
+  margin: var(--spacing-xs) 0;
+}
+
+.noResults p:first-of-type {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Liste des résultats */
+.searchResultsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.searchResultCard {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.searchResultCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-color);
+  background: var(--bg-hover);
+}
+
+.searchResultCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary-color);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.searchResultCard:hover::before {
+  opacity: 1;
+}
+
+/* Header du résultat */
+.resultHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.resultTitleSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+}
+
+.resultTitle {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+.resultCategoryBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.resultCategoryIcon {
+  font-size: var(--font-size-sm);
+}
+
+.resultCount {
+  background: var(--primary-color);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Liste des todos trouvés */
+.resultTodos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.resultTodo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.resultTodo:hover {
+  background: var(--bg-hover);
+}
+
+.resultTodo.completed {
+  opacity: 0.7;
+}
+
+.resultTodo.completed .todoName {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.todoStatus {
+  font-size: var(--font-size-base);
+  flex-shrink: 0;
+}
+
+.todoName {
+  flex: 1;
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.todoPriority {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+/* Action */
+.resultAction {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  padding-top: var(--spacing-sm);
+  border-top: 1px dashed var(--border-color);
+}
+
+.searchResultCard:hover .resultAction {
+  color: var(--primary-color);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Surlignage des correspondances */
+:global(.search-highlight) {
+  background: linear-gradient(120deg, var(--primary-light) 0%, var(--primary-color) 100%);
+  color: white;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-bold);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .searchInputWrapper {
+    max-width: none;
+  }
+  
+  .searchInput {
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 2.5rem;
+    font-size: var(--font-size-sm);
+  }
+  
+  .searchIcon {
+    left: var(--spacing-sm);
+    width: 18px;
+    height: 18px;
+  }
+  
+  .resultHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .resultTitleSection {
+    width: 100%;
+  }
+  
+  .resultTodo {
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
 }
 
 /* Responsive pour les cartes */

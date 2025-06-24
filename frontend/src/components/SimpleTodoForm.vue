@@ -73,18 +73,11 @@ const handleSubmit = () => {
 
   const priority = customPriority.value && customPriority.value > 0 ? customPriority.value : undefined;
 
-  console.log('📝 [SimpleTodoForm] Ajout todo:', {
-    name: todoName.value.trim(),
-    priority,
-    hasCustomPriority: !!priority
-  });
-
   emit('addTodo', todoName.value.trim(), priority);
   resetForm();
 };
 
 const handleCancel = () => {
-  console.log('📝 [SimpleTodoForm] Annulation');
   resetForm();
   emit('cancel');
 };
@@ -107,7 +100,6 @@ const focusInput = async () => {
 // Lifecycle
 onMounted(() => {
   focusInput();
-  console.log('📝 [SimpleTodoForm] Composant monté et focusé');
 });
 
 // Méthodes exposées pour le parent

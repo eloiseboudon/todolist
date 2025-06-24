@@ -82,7 +82,7 @@
           :key="todo.id"
           :class="[styles.resultTodo, { [styles.completed]: todo.completed }]"
         >
-          {{ todo.completed ? '✓' : '•' }} <span v-html="highlightMatch(todo.name)"></span>
+          {{ todo.completed ? '✅' : '⏳' }} <span v-html="highlightMatch(todo.name)"></span>
         </span>
         <span v-if="result.matchingTodos.length > 3" :class="styles.moreResults">
           +{{ result.matchingTodos.length - 3 }} autres...
@@ -95,15 +95,17 @@
     <div v-if="showCreateForm" :class="styles.createForm">
       <input v-model="newTodoListName" type="text" placeholder="Nom de la TodoList..."
         @keyup.enter="handleCreateTodoList" :class="styles.nameInput" />
-      <select id="category-select" v-model="selectedCategoryId" :class="styles.categorySelect">
+      <select id="category-select" v-model="selectedCategoryId" :class="[styles.categorySelect,'btnCompact', 'btnTertiary']">
+        
+        <option value="" disabled selected>Catégorie</option>
         <option v-for="category in categories" :key="category.id" :value="category.id">
           {{ getCategoryIcon(category.icon) }} {{ category.name }}
         </option>
       </select>
-      <button @click="handleCreateTodoList" :class="styles.btnConfirm">
+      <button @click="handleCreateTodoList" :class="['btnCompact', 'btnSecondary']">
         Créer
       </button>
-      <button @click="cancelCreate" :class="styles.btnCancel">
+      <button @click="cancelCreate" :class="['btnCompact', 'btnCancel']">
         Annuler
       </button>
     </div>

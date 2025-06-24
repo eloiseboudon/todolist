@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.schemas import TodoCreate, Todo, TodoUpdate
 from sqlalchemy import func
 from app.db import models
@@ -56,7 +56,9 @@ def recalculate_priorities(db: Session, todolist_id: int):
 @router.get("/", response_model=List[Todo]) 
 def get_todos(db: Session = Depends(get_db)):
     """Récupérer toutes les todos"""
-    return db.query(models.Todo).order_by(models.Todo.todolist_id, models.Todo.priority).all()
+    return db.query(models.Todo).options(
+        joinedload(models.Todo.todolist).joinedload(models.TodoList.category)
+        ).order_by(models.Todo.todolist_id, models.Todo.priority).all()
 
 @router.get("/{todolist_id}", response_model=List[Todo])
 def get_todos_by_todolist(todolist_id: int, db: Session = Depends(get_db)):

@@ -1,5 +1,6 @@
+from __future__ import annotations
 from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import List, Optional, Any
+from typing import List, Optional, Any, TYPE_CHECKING
 
 
 
@@ -151,11 +152,28 @@ class TodoUpdate(BaseModel):
         if not any([self.name, self.completed is not None, self.priority, self.todolist_id]):
             raise ValueError('Au moins un champ doit être fourni pour la mise à jour')
         return self
+    
+class TodoListSimple(BaseModel):
+    """TodoList simplifiée pour les relations (sans todos)"""
+    id: int = Field(..., gt=0)
+    name: str = Field(..., min_length=1, max_length=100)
+    category: Optional[Category] = None
+    
+    class Config:
+        from_attributes = True
+
+
 
 class Todo(TodoBase):
     """Modèle de réponse pour un Todo"""
     id: int = Field(..., gt=0, description="Identifiant unique de la tâche")
-
+    todolist_id: int = Field(..., gt=0, description="ID de la TodoList")
+    
+    # Ajoutez cette ligne pour inclure la relation (avec le modèle simplifié)
+    todolist: Optional[TodoListSimple] = Field(
+        None, 
+        description="TodoList associée"
+    )
     class Config:
         from_attributes = True
 

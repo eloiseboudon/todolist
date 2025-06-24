@@ -35,7 +35,8 @@
       <h3>Résultats de la recherche ({{ filteredTodos.length }})</h3>
       <ul>
         <li v-for="todo in filteredTodos" :key="todo.id">
-          {{ todo.name }} <span class="list-name">({{ todo.todolist.name || 'Liste inconnue' }})</span>
+          {{ todo.name }} 
+          <span class="list-name">({{ todo.todolist?.name || 'Liste inconnue' }})</span>
         </li>
       </ul>
       <div v-if="filteredTodos.length === 0">Aucun résultat.</div>
@@ -234,9 +235,11 @@ const filteredTodos = computed(() => {
   if (!searchTerm.value || searchTerm.value.length < 2) {
     return [];
   }
-  return allTodos.value.filter(todo =>
-    (todo.name || '').toLowerCase().includes(searchTerm.value.toLowerCase())
-  );
+  return allTodos.value.filter(todo => {
+    // Vérification de sécurité pour éviter les erreurs
+    const todoName = todo.name || '';
+    return todoName.toLowerCase().includes(searchTerm.value.toLowerCase());
+  });
 });
 
 const testApiConnection = async () => {

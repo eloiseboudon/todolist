@@ -4,8 +4,7 @@ import {
   type Todo,
   type TodoList,
   type CreateTodoRequest,
-  type UpdateTodoRequest,
-  type Category
+  type UpdateTodoRequest
 } from '../services/api';
 import { useNotifications } from './useNotifications';
 import type { ExportOptions, ExportData, ExportMetadata } from '@/types/export';
@@ -21,7 +20,6 @@ const withRetry = async <T>(
     try {
       return await fn();
     } catch (error) {
-      console.log(`⚠️ Tentative ${i + 1}/${maxRetries} échouée pour ${operation}:`, error);
 
       if (i === maxRetries - 1) {
         console.error(`❌ Échec définitif après ${maxRetries} tentatives pour ${operation}`);
@@ -30,7 +28,6 @@ const withRetry = async <T>(
 
       // Délai progressif : 1s, 2s, 3s...
       const delay = 1000 * (i + 1);
-      console.log(`⏳ Nouvelle tentative dans ${delay}ms...`);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
@@ -50,7 +47,7 @@ const loadAllTodos = async () => {
   loading.value = true;
   try {
     allTodos.value = await todosApi.getAll();
-  } catch (err) {
+  } catch {
     error.value = 'Erreur lors du chargement des todos';
   } finally {
     loading.value = false;
@@ -58,14 +55,15 @@ const loadAllTodos = async () => {
 };
 
 // 🎯 NOUVELLES FONCTIONS pour gérer le scroll
-const preserveScrollPosition = async (operation: () => Promise<any>) => {
+const preserveScrollPosition = async <T>(operation: () => Promise<T>): Promise<T> => {
   // Sauvegarder la position de scroll
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+  let result: T;
 
   try {
     // Exécuter l'opération
-    await operation();
+    result = await operation();
 
     // Attendre que le DOM soit mis à jour
     await new Promise(resolve => setTimeout(resolve, 100));
@@ -85,6 +83,7 @@ const preserveScrollPosition = async (operation: () => Promise<any>) => {
     });
     throw error;
   }
+  return result;
 };
 
 
@@ -101,7 +100,7 @@ const exportTodoListWithOptions = (
     format = 'pretty'
   } = options;
 
-  console.log(`📥 Export de "${todolist.name}" avec options:`, options);
+  // Prepare export with options
 
   // 🔍 1. FILTRAGE DES TODOS selon les options
   let filteredTodos = [...todos];
@@ -112,12 +111,10 @@ const exportTodoListWithOptions = (
   } else {
     if (!includeCompleted) {
       filteredTodos = filteredTodos.filter(t => !t.completed);
-      console.log(`🔴 Exclusion des todos terminés: ${todos.filter(t => t.completed).length} exclus`);
     }
 
     if (!includePending) {
       filteredTodos = filteredTodos.filter(t => t.completed);
-      console.log(`🔴 Exclusion des todos en cours: ${todos.filter(t => !t.completed).length} exclus`);
     }
   }
 
@@ -135,7 +132,6 @@ const exportTodoListWithOptions = (
   };
 
   filteredTodos.sort(sortFunctions[sortBy]);
-  console.log(`🔄 Todos triés par: ${sortBy} (${filteredTodos.length} todos)`);
 
   // 🏗️ 3. CONSTRUCTION DE L'OBJET D'EXPORT
   const exportData: ExportData = {
@@ -183,11 +179,7 @@ const exportTodoListWithOptions = (
     exportData.metadata = metadata;
   }
 
-  console.log('✅ Données d\'export préparées:', {
-    todolist: exportData.todolist.name,
-    todos_count: exportData.todos.length,
-    has_metadata: !!exportData.metadata
-  });
+
 
   return exportData;
 };
@@ -201,7 +193,6 @@ const downloadTodoListWithOptions = async (
   options: ExportOptions = {}
 ): Promise<void> => {
   try {
-    console.log(`🚀 Début du téléchargement de "${todolist.name}"`);
 
     // 1. Préparer les données d'export
     const exportData = exportTodoListWithOptions(todolist, todos, options);
@@ -232,8 +223,6 @@ const downloadTodoListWithOptions = async (
     const suffixString = suffixes.length > 0 ? `_${suffixes.join('_')}` : '';
     const filename = `todolist_${safeName}${suffixString}_${timestamp}.json`;
 
-    console.log(`📁 Nom de fichier généré: ${filename}`);
-
     // 5. Déclencher le téléchargement
     const link = document.createElement('a');
     link.href = url;
@@ -260,13 +249,6 @@ const downloadTodoListWithOptions = async (
     }
 
     success('Export réussi', `"${todolist.name}" - ${message}`);
-
-    console.log('✅ Export terminé avec succès:', {
-      filename,
-      size: `${(blob.size / 1024).toFixed(1)} KB`,
-      todos_exported: todoCount,
-      format: options.format
-    });
 
   } catch (error) {
     console.error('❌ Erreur lors de l\'export:', error);
@@ -560,7 +542,7 @@ export function useTodos() {
       }
 
       try {
-        const updatedTodo = await todosApi.toggle(todo.id, originalTodo);
+        const updatedTodo = await todosApi.toggle(todo.id);
 
         // 🎯 CORRECTION : Recharger toute la TodoList pour avoir les priorités à jour
         if (currentTodolist.value) {

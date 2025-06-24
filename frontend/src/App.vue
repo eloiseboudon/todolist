@@ -49,6 +49,11 @@
       :confirm-text="confirmState.options.confirmText" :cancel-text="confirmState.options.cancelText"
       :loading-text="confirmState.options.loadingText" :loading="confirmState.loading" @confirm="handleConfirm"
       @cancel="handleCancel" />
+
+    <button :class="styles.themeToggle" @click="toggleTheme">
+      <span v-if="theme === 'light'">🌙</span>
+      <span v-else>☀️</span>
+    </button>
   </div>
 </template>
 
@@ -57,6 +62,8 @@ import styles from '@/styles/App.module.css';
 import ToastNotifications from '@/components/ToastNotifications.vue';
 import ConfirmModal from '@/components/ConfirmModal.vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { useTheme } from '@/composables/useTheme';
 
 const { confirmState, handleConfirm, handleCancel } = useConfirm();
+const { theme, toggleTheme } = useTheme();
 </script>

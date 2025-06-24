@@ -138,10 +138,12 @@ const handleSubmit = async () => {
     try {
         const updateData = {
             name: props.todolist.name,
-            category_id: selectedCategoryId.value || null
+            category_id:
+                selectedCategoryId.value !== '' ? selectedCategoryId.value : undefined
         };
 
         const updatedTodolist = await todoListsApi.update(props.todolist.id, updateData);
+
         emit('updated', updatedTodolist);
         success(
             'Catégorie mise à jour',

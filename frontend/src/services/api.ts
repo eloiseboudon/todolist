@@ -52,7 +52,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public response?: any
+    public response?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
@@ -203,7 +203,7 @@ export const todosApi = {
   },
 
   // Toggle le statut completed d'un todo
-  async toggle(id: number, currentTodo: Todo): Promise<Todo> {
+  async toggle(id: number): Promise<Todo> {
     return apiRequest<Todo>(`/todos/${id}/toggle`, {
       method: 'PATCH',
     });

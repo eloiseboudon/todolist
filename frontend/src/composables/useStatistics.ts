@@ -1,10 +1,10 @@
 import { ref, computed } from 'vue';
-import { todoListsApi, todosApi } from '../services/api';
+import { todoListsApi } from '../services/api';
 import type { Todo, TodoList } from '../services/api';
 
-interface TodoWithList extends Todo {
+type TodoWithList = Omit<Todo, 'todolist'> & {
   todolist?: TodoList;
-}
+};
 
 interface DayStats {
   date: string;

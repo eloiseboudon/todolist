@@ -3,6 +3,7 @@
     <div :class="styles.todoContent">
       <input type="checkbox" :checked="todo.completed" @change="toggleTodo" :class="styles.todoCheckbox" />
       <span :class="styles.todoName">{{ todo.name }}</span>
+      <span v-if="todo.quantity" :class="styles.todoQuantity">{{ todo.quantity }}</span>
       <span :class="styles.todoPriority">{{ todo.priority }}</span>
     </div>
 

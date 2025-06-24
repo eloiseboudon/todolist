@@ -62,6 +62,7 @@ def create_todolist(todolist: TodoListCreate, db: Session = Depends(get_db)):
                     name=todo_data.name,
                     completed=todo_data.completed,
                     priority=final_priority,
+                    quantity=todo_data.quantity,
                     todolist_id=db_todolist.id
                 )
                 db.add(db_todo)
@@ -161,6 +162,7 @@ def add_todo_to_list(todolist_id: int, todo: TodoCreate, db: Session = Depends(g
             name=todo.name,
             completed=todo.completed,  # Normalement False
             priority=temp_priority,
+            quantity=todo.quantity,
             todolist_id=todolist_id
         )
 
@@ -255,7 +257,7 @@ def delete_todolist(todolist_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{todolist_id}/todos", response_model=List[Todo])
 def get_todos_from_list(
-    todolist_id: int, 
+    todolist_id: int,
     completed: Optional[bool] = None,
     db: Session = Depends(get_db)
 ):
@@ -274,3 +276,60 @@ def get_todos_from_list(
         query = query.filter(models.Todo.completed == completed)
     
     return query.order_by(models.Todo.priority).all()
+
+
+@router.post("/generate_courses", response_model=TodoList)
+def generate_courses(recipe_ids: List[int], db: Session = Depends(get_db)):
+    """Créer une TodoList de courses à partir de listes de recettes"""
+
+    if not recipe_ids:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="recipe_ids required")
+
+    # Vérifier que toutes les todolists existent et sont de type recette
+    recipe_lists = (
+        db.query(models.TodoList)
+        .join(models.Category)
+        .filter(models.TodoList.id.in_(recipe_ids))
+        .filter(func.lower(models.Category.name) == "recette")
+        .all()
+    )
+
+    if len(recipe_lists) != len(recipe_ids):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Recipe list not found")
+
+    # Obtenir ou créer la catégorie "courses"
+    courses_cat = (
+        db.query(models.Category)
+        .filter(func.lower(models.Category.name) == "courses")
+        .first()
+    )
+    if not courses_cat:
+        courses_cat = models.Category(name="courses", color="#10B981", icon="shopping-cart")
+        db.add(courses_cat)
+        db.commit()
+        db.refresh(courses_cat)
+
+    # Créer la nouvelle todolist
+    course_list = models.TodoList(name="Courses", category_id=courses_cat.id)
+    db.add(course_list)
+    db.commit()
+    db.refresh(course_list)
+
+    # Copier les ingrédients
+    for rlist in recipe_lists:
+        todos = db.query(models.Todo).filter(models.Todo.todolist_id == rlist.id).all()
+        for todo in todos:
+            new_todo = models.Todo(
+                name=todo.name,
+                completed=False,
+                priority=9999,
+                quantity=todo.quantity,
+                todolist_id=course_list.id,
+            )
+            db.add(new_todo)
+    db.commit()
+    recalculate_priorities(db, course_list.id)
+    db.refresh(course_list)
+    return course_list

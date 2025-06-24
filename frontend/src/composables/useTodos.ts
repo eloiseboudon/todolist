@@ -478,7 +478,12 @@ export function useTodos() {
   };
 
   // Actions pour les Todos
-  const addTodo = async (todolistId: number, name: string, priority?: number) => {
+  const addTodo = async (
+    todolistId: number,
+    name: string,
+    priority?: number,
+    quantity?: string,
+  ) => {
     await preserveScrollPosition(async () => {
 
       loading.value = true;
@@ -486,6 +491,9 @@ export function useTodos() {
 
       try {
         const todoData: CreateTodoRequest = { name };
+        if (quantity) {
+          todoData.quantity = quantity;
+        }
         if (priority !== undefined && priority > 0) {
           todoData.priority = priority;
         }

@@ -62,8 +62,12 @@ class TodoBase(BaseModel):
         description="Statut de completion de la tâche"
     )
     priority: Optional[int] = Field(
-        default=None, 
+        default=None,
         description="Priorité de la tâche"
+    )
+    quantity: Optional[str] = Field(
+        default=None,
+        description="Quantité pour l'ingrédient"
     )
     
     @field_validator('name')
@@ -103,8 +107,12 @@ class TodoUpdate(BaseModel):
         description="Nouveau statut de completion"
     )
     priority: Optional[int] = Field(
-        None, 
+        None,
         description="Nouvelle position/ordre dans la liste"
+    )
+    quantity: Optional[str] = Field(
+        None,
+        description="Quantité de l'ingrédient"
     )
     todolist_id: Optional[int] = Field(
         None,
@@ -149,7 +157,13 @@ class TodoUpdate(BaseModel):
     @model_validator(mode='after')
     def validate_at_least_one_field(self) -> 'TodoUpdate':
         """Vérifie qu'au moins un champ est fourni pour la mise à jour"""
-        if not any([self.name, self.completed is not None, self.priority, self.todolist_id]):
+        if not any([
+            self.name,
+            self.completed is not None,
+            self.priority,
+            self.quantity,
+            self.todolist_id,
+        ]):
             raise ValueError('Au moins un champ doit être fourni pour la mise à jour')
         return self
     

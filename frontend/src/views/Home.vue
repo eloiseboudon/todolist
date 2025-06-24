@@ -100,10 +100,10 @@
           {{ getCategoryIcon(category.icon) }} {{ category.name }}
         </option>
       </select>
-      <button @click="handleCreateTodoList" :class="styles.btnConfirm">
+      <button @click="handleCreateTodoList" :class="[styles.btnCompact, styles.btnSecondary]">
         Créer
       </button>
-      <button @click="cancelCreate" :class="styles.btnCancel">
+      <button @click="cancelCreate" :class="[styles.btnCompact, styles.btnCancel]">
         Annuler
       </button>
     </div>

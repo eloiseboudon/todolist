@@ -196,7 +196,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useStatistics } from '@/composables/useStatistics';
-import { useNotifications } from '@/composables/useNotifications';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -210,6 +209,8 @@ import {
   ArcElement,
 } from 'chart.js';
 import { Bar, Doughnut } from 'vue-chartjs';
+
+defineOptions({ name: 'StatisticsPage' });
 
 // Configuration Chart.js
 ChartJS.register(
@@ -234,7 +235,6 @@ const {
   chartData
 } = useStatistics();
 
-const { success } = useNotifications();
 
 // Charger les données au montage
 onMounted(() => {

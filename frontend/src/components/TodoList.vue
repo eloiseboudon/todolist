@@ -214,7 +214,7 @@ const initializeSortable = () => {
       // Événements de debug
       onStart: () => {},
 
-      onMove: (evt) => {
+      onMove: () => {
         // Optionnel : log des mouvements
         return true; // Autoriser le mouvement
       }
@@ -249,7 +249,7 @@ const closeExportMenu = () => {
 const handleExport = async (type: string) => {
   closeExportMenu();
   try {
-    const { exportTodoListWithOptions, downloadTodoListWithOptions, exportPresets } = useTodos();
+    const { exportPresets } = useTodos();
 
     switch (type) {
       case 'all':

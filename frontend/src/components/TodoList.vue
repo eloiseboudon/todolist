@@ -140,32 +140,11 @@ let sortableInstance: Sortable | null = null;
 const {
   saving,
   todoSaved,
-  todoAdded,
-  todoDeleted,
-  apiError,
-  todolistDeleted
+  apiError
 } = useNotifications();
 
 // État pour la gestion du scroll
 const currentlyModifying = ref<number | null>(null);
-const shouldPreserveScroll = ref(false);
-
-// Fonctions de gestion du scroll
-const saveScrollPosition = () => {
-  if (typeof window !== 'undefined') {
-    sessionStorage.setItem('scrollPosition', window.pageYOffset.toString());
-  }
-};
-
-const restoreScrollPosition = () => {
-  if (typeof window !== 'undefined') {
-    const position = sessionStorage.getItem('scrollPosition');
-    if (position) {
-      window.scrollTo(0, parseInt(position));
-      sessionStorage.removeItem('scrollPosition');
-    }
-  }
-};
 
 const scrollToTodo = (todoId: number, behavior: ScrollBehavior = 'smooth') => {
   if (typeof window !== 'undefined') {
@@ -188,7 +167,6 @@ const destroySortableInstance = () => {
       if (sortableContainer.value && sortableInstance.el) {
         sortableInstance.destroy();
       }
-      console.log('🧹 Sortable détruit');
     } catch (error) {
       console.warn('⚠️ Erreur lors de la destruction de Sortable:', error);
     } finally {
@@ -234,9 +212,7 @@ const initializeSortable = () => {
       },
 
       // Événements de debug
-      onStart: (evt) => {
-        console.log('🎯 Début du drag:', evt.oldIndex);
-      },
+      onStart: () => {},
 
       onMove: (evt) => {
         // Optionnel : log des mouvements
@@ -251,13 +227,10 @@ const initializeSortable = () => {
 
 // 🎯 WATCHERS POUR RÉINITIALISER SORTABLE
 watch(() => props.todos.length, (newLength) => {
-  console.log(`📊 Changement nombre de todos: ${newLength}`);
   nextTick(() => {
     if (newLength > 1 && !sortableInstance) {
-      console.log('🔄 Réinitialisation de Sortable (ajout)');
       initializeSortable();
     } else if (newLength <= 1 && sortableInstance) {
-      console.log('🧹 Destruction de Sortable (suppression)');
       destroySortableInstance();
     }
   });
@@ -341,7 +314,7 @@ const handleReorder = async (oldIndex: number, newIndex: number) => {
     currentlyModifying.value = movedTodo.id;
   }
 
-  const savingId = saving();
+  saving();
 
   try {
     // Créer le nouvel ordre
@@ -389,34 +362,35 @@ const handleDelete = (id: number) => {
 };
 
 // 🎯 Lifecycle hooks
+let clickOutsideHandler: (event: Event) => void;
+
 onMounted(() => {
-  console.log('📝 [TodoList] Composant monté');
   nextTick(() => {
     if (props.todos.length > 1) {
-      console.log('🎯 Initialisation initiale de Sortable');
       initializeSortable();
     }
   });
 
-  // Fermer le menu d'export au clic extérieur
-  document.addEventListener('click', (event: Event) => {
+  clickOutsideHandler = (event: Event) => {
     const target = event.target as Element;
     if (!target.closest(`.${styles.exportDropdown}`)) {
       closeExportMenu();
     }
-  });
+  };
+
+  document.addEventListener('click', clickOutsideHandler);
 });
 
 onUpdated(() => {
-  // Vérifier la cohérence après mise à jour
   if (!sortableContainer.value && sortableInstance) {
-    console.log('🧹 Container supprimé, nettoyage...');
     destroySortableInstance();
   }
 });
 
 onBeforeUnmount(() => {
-  console.log('📝 [TodoList] Nettoyage avant démontage');
   destroySortableInstance();
+  if (clickOutsideHandler) {
+    document.removeEventListener('click', clickOutsideHandler);
+  }
 });
 </script>

@@ -8,11 +8,11 @@
           <div :class="styles.headerBadges">
             <!-- Badge catégorie (si existe) -->
             <div v-if="todolist.category" :class="['categoryBadge']">
-              <span :class="['categoryIcon']">{{ getCategoryIcon(todolist.category.icon) }}</span>
+              <span :class="[styles.categoryIcon]">{{ getCategoryIcon(todolist.category.icon) }}</span>
               <span>{{ todolist.category.name }}</span>
             </div>
             <!-- Badge nombre de tâches -->
-            <div :class="['countBadge']">{{ todos.length }} tâche(s)</div>
+            <div :class="[styles.countBadge]">{{ todos.length }} tâche(s)</div>
           </div>
         </div>
       </div>

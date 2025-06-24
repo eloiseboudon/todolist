@@ -4,8 +4,7 @@ import {
   type Todo,
   type TodoList,
   type CreateTodoRequest,
-  type UpdateTodoRequest,
-  type Category
+  type UpdateTodoRequest
 } from '../services/api';
 import { useNotifications } from './useNotifications';
 import type { ExportOptions, ExportData, ExportMetadata } from '@/types/export';
@@ -48,7 +47,7 @@ const loadAllTodos = async () => {
   loading.value = true;
   try {
     allTodos.value = await todosApi.getAll();
-  } catch (err) {
+  } catch {
     error.value = 'Erreur lors du chargement des todos';
   } finally {
     loading.value = false;
@@ -56,14 +55,15 @@ const loadAllTodos = async () => {
 };
 
 // 🎯 NOUVELLES FONCTIONS pour gérer le scroll
-const preserveScrollPosition = async (operation: () => Promise<any>) => {
+const preserveScrollPosition = async <T>(operation: () => Promise<T>): Promise<T> => {
   // Sauvegarder la position de scroll
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+  let result: T;
 
   try {
     // Exécuter l'opération
-    await operation();
+    result = await operation();
 
     // Attendre que le DOM soit mis à jour
     await new Promise(resolve => setTimeout(resolve, 100));
@@ -83,6 +83,7 @@ const preserveScrollPosition = async (operation: () => Promise<any>) => {
     });
     throw error;
   }
+  return result;
 };
 
 
@@ -541,7 +542,7 @@ export function useTodos() {
       }
 
       try {
-        const updatedTodo = await todosApi.toggle(todo.id, originalTodo);
+        const updatedTodo = await todosApi.toggle(todo.id);
 
         // 🎯 CORRECTION : Recharger toute la TodoList pour avoir les priorités à jour
         if (currentTodolist.value) {

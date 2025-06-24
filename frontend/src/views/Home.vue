@@ -190,7 +190,9 @@ import { useTodos } from '@/composables/useTodos';
 import styles from '@/styles/views/Home.module.css';
 import { getCategoryIcon } from '@/composables/useCategory';
 import { categoriesApi } from '@/services/api';
-import type { TodoList, Category } from '@/services/api';
+import type { TodoList, Category, Todo } from '@/services/api';
+
+defineOptions({ name: 'HomePage' });
 const router = useRouter();
 
 
@@ -215,8 +217,6 @@ const searchTerm = ref('');
 
 const categories = ref<Category[]>([]);
 const selectedCategoryId = ref<number | ''>('');
-
-const saving = ref(false);
 // Charger les TodoLists au montage
 onMounted(() => {
   loadTodoLists();
@@ -280,24 +280,13 @@ onMounted(() => {
   loadCategories();
 });
 
-const filteredTodos = computed(() => {
-  if (!searchTerm.value || searchTerm.value.length < 2) {
-    return [];
-  }
-  return allTodos.value.filter(todo => {
-    // Vérification de sécurité pour éviter les erreurs
-    const todoName = todo.name || '';
-    return todoName.toLowerCase().includes(searchTerm.value.toLowerCase());
-  });
-});
-
 const todoListsWithMatches = computed(() => {
   if (!searchTerm.value || searchTerm.value.length < 2) {
     return [];
   }
 
   const searchQuery = searchTerm.value.toLowerCase();
-  const results: { todolist: TodoList; matchingTodos: any[] }[] = [];
+  const results: { todolist: TodoList; matchingTodos: Todo[] }[] = [];
 
   // Grouper les todos par TodoList
   const todosByList = new Map();
@@ -320,10 +309,10 @@ const todoListsWithMatches = computed(() => {
   });
 
   // Convertir en array et filtrer les listes sans résultats
-  todosByList.forEach((listData, listId) => {
+  todosByList.forEach((listData) => {
     if (listData.matchingTodos.length > 0) {
       // Trier les todos par priorité
-      listData.matchingTodos.sort((a: any, b: any) => a.priority - b.priority);
+      listData.matchingTodos.sort((a: Todo, b: Todo) => a.priority - b.priority);
       results.push(listData);
     }
   });

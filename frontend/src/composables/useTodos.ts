@@ -4,7 +4,8 @@ import {
   type Todo,
   type TodoList,
   type CreateTodoRequest,
-  type UpdateTodoRequest
+  type UpdateTodoRequest,
+  type Category
 } from '../services/api';
 import { useNotifications } from './useNotifications';
 import type { ExportOptions, ExportData, ExportMetadata } from '@/types/export';
@@ -384,12 +385,12 @@ export function useTodos() {
     }
   };
 
-  const createTodoList = async (name: string) => {
+  const createTodoList = async (name: string, category_id : number) => {
     loading.value = true;
     error.value = null;
 
     try {
-      const newTodoList = await todoListsApi.create({ name });
+      const newTodoList = await todoListsApi.create({ name, category_id });
       todolists.value.push(newTodoList);
       return newTodoList;
     } catch (err) {

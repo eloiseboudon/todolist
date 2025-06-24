@@ -30,6 +30,11 @@
     <div v-if="showCreateForm" :class="styles.createForm">
       <input v-model="newTodoListName" type="text" placeholder="Nom de la TodoList..."
         @keyup.enter="handleCreateTodoList" :class="styles.nameInput" />
+      <select id="category-select" v-model="selectedCategoryId" :class="styles.categorySelect">
+        <option v-for="category in categories" :key="category.id" :value="category.id">
+          {{ getCategoryIcon(category.icon) }} {{ category.name }}
+        </option>
+      </select>
       <button @click="handleCreateTodoList" :class="styles.btnConfirm">
         Créer
       </button>
@@ -52,15 +57,15 @@
 
     <!-- Liste des TodoLists -->
     <div v-if="!loading && todolists.length > 0" :class="styles.todolistsGrid">
-      
+
       <div v-for="todolist in todolists" :key="todolist.id" :class="[
         styles.todolistCard,
         todolist.category ? styles.todolistCardWithCategory : styles.todolistCardDefault
       ]" :style="todolist.category ? {
-      '--category-color': todolist.category.color,
-      '--category-color-light': todolist.category.color + '15',
-      '--category-color-hover': todolist.category.color + '25'
-    } : {}" @click="goToTodoList(todolist.id)">
+        '--category-color': todolist.category.color,
+        '--category-color-light': todolist.category.color + '15',
+        '--category-color-hover': todolist.category.color + '25'
+      } : {}" @click="goToTodoList(todolist.id)">
 
         <div :class="styles.cardHeader">
           <h3>{{ todolist.name }}</h3>
@@ -113,13 +118,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTodos } from '@/composables/useTodos';
 import styles from '@/styles/views/Home.module.css';
 import { getCategoryIcon } from '@/composables/useCategory';
-
+import { categoriesApi } from '@/services/api';
+import type { TodoList, Category } from '@/services/api';
 const router = useRouter();
+
 
 const {
   todolists,
@@ -132,10 +139,15 @@ const {
   testConnection
 } = useTodos();
 
+
 // État local
 const showCreateForm = ref(false);
 const newTodoListName = ref('');
 
+const categories = ref<Category[]>([]);
+const selectedCategoryId = ref<number | ''>('');
+
+const saving = ref(false);
 // Charger les TodoLists au montage
 onMounted(() => {
   loadTodoLists();
@@ -145,9 +157,10 @@ onMounted(() => {
 // Actions
 const handleCreateTodoList = async () => {
   if (!newTodoListName.value.trim()) return;
+  if (!selectedCategoryId.value) return;
 
   try {
-    const newTodoList = await createTodoList(newTodoListName.value.trim());
+    const newTodoList = await createTodoList(newTodoListName.value.trim(), selectedCategoryId.value);
     newTodoListName.value = '';
     showCreateForm.value = false;
 
@@ -175,9 +188,29 @@ const handleDeleteTodoList = async (id: number) => {
   }
 };
 
+const loadCategories = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    categories.value = await categoriesApi.getActive();
+
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Erreur lors du chargement des catégories';
+    console.error('Erreur chargement catégories:', err);
+  } finally {
+    loading.value = false;
+  }
+};
+
+
+
 const goToTodoList = (id: number) => {
   router.push(`/todolist/${id}`);
 };
+// Lifecycle
+onMounted(() => {
+    loadCategories();
+});
 
 const testApiConnection = async () => {
   const isConnected = await testConnection();

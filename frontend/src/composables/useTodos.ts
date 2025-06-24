@@ -43,7 +43,19 @@ const currentTodolist = ref<TodoList | null>(null);
 const currentTodos = ref<Todo[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
+const allTodos = ref<Todo[]>([]);
 
+
+const loadAllTodos = async () => {
+  loading.value = true;
+  try {
+    allTodos.value = await todosApi.getAll();
+  } catch (err) {
+    error.value = 'Erreur lors du chargement des todos';
+  } finally {
+    loading.value = false;
+  }
+};
 
 // 🎯 NOUVELLES FONCTIONS pour gérer le scroll
 const preserveScrollPosition = async (operation: () => Promise<any>) => {
@@ -385,7 +397,7 @@ export function useTodos() {
     }
   };
 
-  const createTodoList = async (name: string, category_id : number) => {
+  const createTodoList = async (name: string, category_id: number) => {
     loading.value = true;
     error.value = null;
 
@@ -672,5 +684,9 @@ export function useTodos() {
     // Utilitaires
     clearError,
     testConnection,
+
+    //Actions de recherche
+    allTodos,
+    loadAllTodos
   };
 }

@@ -26,6 +26,71 @@
       </div>
     </div>
 
+<!-- ✨ BARRE DE RECHERCHE COMPACTE -->
+<div :class="styles.searchBar">
+  <div :class="styles.searchInputWrapper">
+    <svg :class="styles.searchIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+    </svg>
+    <input 
+      v-model="searchTerm" 
+      type="text" 
+      placeholder="Rechercher..." 
+      :class="styles.searchInput"
+    />
+    <button 
+      v-if="searchTerm.length > 0" 
+      @click="searchTerm = ''"
+      :class="styles.clearButton"
+      title="Effacer"
+    >
+      ×
+    </button>
+  </div>
+</div>
+
+<!-- 🎯 RÉSULTATS DE RECHERCHE COMPACTS -->
+<div v-if="searchTerm.length >= 2" :class="styles.searchResults">
+  <div :class="styles.searchHeader">
+    <span :class="styles.searchTitle">{{ totalMatchingTodos }} résultat(s) dans {{ todoListsWithMatches.length }} liste(s)</span>
+  </div>
+
+  <div v-if="todoListsWithMatches.length === 0" :class="styles.noResults">
+    <span>🤷‍♀️ Aucun résultat</span>
+  </div>
+
+  <div v-else :class="styles.searchResultsList">
+    <div 
+      v-for="result in todoListsWithMatches" 
+      :key="result.todolist.id"
+      :class="styles.searchResultCard"
+      @click="goToTodoList(result.todolist.id)"
+    >
+      <!-- En-tête compact -->
+      <div :class="styles.resultHeader">
+        <span :class="styles.resultTitle">{{ result.todolist.name }}</span>
+        <span v-if="result.todolist.category" :class="styles.resultCategoryBadge">
+          {{ getCategoryIcon(result.todolist.category.icon) }} {{ result.todolist.category.name }}
+        </span>
+        <span :class="styles.resultCount">{{ result.matchingTodos.length }}</span>
+      </div>
+
+      <!-- Liste compacte des todos trouvés -->
+      <div :class="styles.resultTodos">
+        <span 
+          v-for="todo in result.matchingTodos.slice(0, 3)" 
+          :key="todo.id"
+          :class="[styles.resultTodo, { [styles.completed]: todo.completed }]"
+        >
+          {{ todo.completed ? '✓' : '•' }} <span v-html="highlightMatch(todo.name)"></span>
+        </span>
+        <span v-if="result.matchingTodos.length > 3" :class="styles.moreResults">
+          +{{ result.matchingTodos.length - 3 }} autres...
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
     <!-- Formulaire de création -->
     <div v-if="showCreateForm" :class="styles.createForm">
       <input v-model="newTodoListName" type="text" placeholder="Nom de la TodoList..."
@@ -95,8 +160,9 @@
           <span :class="styles.categoryName">Aucune catégorie</span>
         </div>
       </div>
-
     </div>
+
+
 
     <!-- État vide -->
     <div v-if="!loading && todolists.length === 0" :class="styles.emptyState">
@@ -136,13 +202,16 @@ const {
   createTodoList,
   deleteTodoList,
   clearError,
-  testConnection
+  testConnection, 
+  loadAllTodos, 
+  allTodos
 } = useTodos();
 
 
 // État local
 const showCreateForm = ref(false);
 const newTodoListName = ref('');
+const searchTerm = ref('');
 
 const categories = ref<Category[]>([]);
 const selectedCategoryId = ref<number | ''>('');
@@ -151,6 +220,7 @@ const saving = ref(false);
 // Charger les TodoLists au montage
 onMounted(() => {
   loadTodoLists();
+  loadAllTodos();
 });
 
 
@@ -202,15 +272,92 @@ const loadCategories = async () => {
   }
 };
 
-
-
 const goToTodoList = (id: number) => {
   router.push(`/todolist/${id}`);
 };
 // Lifecycle
 onMounted(() => {
-    loadCategories();
+  loadCategories();
 });
+
+const filteredTodos = computed(() => {
+  if (!searchTerm.value || searchTerm.value.length < 2) {
+    return [];
+  }
+  return allTodos.value.filter(todo => {
+    // Vérification de sécurité pour éviter les erreurs
+    const todoName = todo.name || '';
+    return todoName.toLowerCase().includes(searchTerm.value.toLowerCase());
+  });
+});
+
+const todoListsWithMatches = computed(() => {
+  if (!searchTerm.value || searchTerm.value.length < 2) {
+    return [];
+  }
+
+  const searchQuery = searchTerm.value.toLowerCase();
+  const results: { todolist: TodoList; matchingTodos: any[] }[] = [];
+
+  // Grouper les todos par TodoList
+  const todosByList = new Map();
+  
+  allTodos.value.forEach(todo => {
+    if (!todo.todolist) return;
+    
+    const listId = todo.todolist.id;
+    if (!todosByList.has(listId)) {
+      todosByList.set(listId, {
+        todolist: todo.todolist,
+        matchingTodos: []
+      });
+    }
+    
+    // Vérifier si le todo correspond à la recherche
+    if (todo.name && todo.name.toLowerCase().includes(searchQuery)) {
+      todosByList.get(listId).matchingTodos.push(todo);
+    }
+  });
+
+  // Convertir en array et filtrer les listes sans résultats
+  todosByList.forEach((listData, listId) => {
+    if (listData.matchingTodos.length > 0) {
+      // Trier les todos par priorité
+      listData.matchingTodos.sort((a: any, b: any) => a.priority - b.priority);
+      results.push(listData);
+    }
+  });
+
+  // Trier les TodoLists par nombre de résultats (plus de résultats en premier)
+  return results.sort((a, b) => b.matchingTodos.length - a.matchingTodos.length);
+});
+
+const totalMatchingTodos = computed(() => {
+  return todoListsWithMatches.value.reduce((total, result) => 
+    total + result.matchingTodos.length, 0
+  );
+});
+
+// ✨ FONCTION POUR SURLIGNER LES CORRESPONDANCES
+const highlightMatch = (text: string) => {
+  if (!searchTerm.value || searchTerm.value.length < 2) {
+    return text;
+  }
+  
+  const query = searchTerm.value.toLowerCase();
+  const lowerText = text.toLowerCase();
+  const index = lowerText.indexOf(query);
+  
+  if (index === -1) {
+    return text;
+  }
+  
+  return text.substring(0, index) + 
+         '<mark class="search-highlight">' + 
+         text.substring(index, index + query.length) + 
+         '</mark>' + 
+         text.substring(index + query.length);
+};
 
 const testApiConnection = async () => {
   const isConnected = await testConnection();

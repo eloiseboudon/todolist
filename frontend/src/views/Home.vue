@@ -26,91 +26,71 @@
       </div>
     </div>
 
+<!-- ✨ BARRE DE RECHERCHE COMPACTE -->
 <div :class="styles.searchBar">
-    <div :class="styles.searchInputWrapper">
-      <svg :class="styles.searchIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-      </svg>
-      <input 
-        v-model="searchTerm" 
-        type="text" 
-        placeholder="Rechercher dans toutes vos listes..." 
-        :class="styles.searchInput"
-      />
-      <button 
-        v-if="searchTerm.length > 0" 
-        @click="searchTerm = ''"
-        :class="styles.clearButton"
-        title="Effacer la recherche"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
+  <div :class="styles.searchInputWrapper">
+    <svg :class="styles.searchIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+    </svg>
+    <input 
+      v-model="searchTerm" 
+      type="text" 
+      placeholder="Rechercher..." 
+      :class="styles.searchInput"
+    />
+    <button 
+      v-if="searchTerm.length > 0" 
+      @click="searchTerm = ''"
+      :class="styles.clearButton"
+      title="Effacer"
+    >
+      ×
+    </button>
+  </div>
+</div>
+
+<!-- 🎯 RÉSULTATS DE RECHERCHE COMPACTS -->
+<div v-if="searchTerm.length >= 2" :class="styles.searchResults">
+  <div :class="styles.searchHeader">
+    <span :class="styles.searchTitle">{{ totalMatchingTodos }} résultat(s) dans {{ todoListsWithMatches.length }} liste(s)</span>
   </div>
 
-  <!-- 🎯 RÉSULTATS DE RECHERCHE GROUPÉS PAR TODOLIST -->
-  <div v-if="searchTerm.length >= 2" :class="styles.searchResults">
-    <div :class="styles.searchHeader">
-      <h3>🔍 Résultats de recherche</h3>
-      <span :class="styles.searchStats">
-        {{ todoListsWithMatches.length }} liste(s) • {{ totalMatchingTodos }} todo(s)
-      </span>
-    </div>
+  <div v-if="todoListsWithMatches.length === 0" :class="styles.noResults">
+    <span>🤷‍♀️ Aucun résultat</span>
+  </div>
 
-    <div v-if="todoListsWithMatches.length === 0" :class="styles.noResults">
-      <div :class="styles.noResultsIcon">🤷‍♀️</div>
-      <p><strong>Aucun résultat trouvé</strong></p>
-      <p>Essayez avec d'autres mots-clés</p>
-    </div>
+  <div v-else :class="styles.searchResultsList">
+    <div 
+      v-for="result in todoListsWithMatches" 
+      :key="result.todolist.id"
+      :class="styles.searchResultCard"
+      @click="goToTodoList(result.todolist.id)"
+    >
+      <!-- En-tête compact -->
+      <div :class="styles.resultHeader">
+        <span :class="styles.resultTitle">{{ result.todolist.name }}</span>
+        <span v-if="result.todolist.category" :class="styles.resultCategoryBadge">
+          {{ getCategoryIcon(result.todolist.category.icon) }} {{ result.todolist.category.name }}
+        </span>
+        <span :class="styles.resultCount">{{ result.matchingTodos.length }}</span>
+      </div>
 
-    <div v-else :class="styles.searchResultsList">
-      <div 
-        v-for="result in todoListsWithMatches" 
-        :key="result.todolist.id"
-        :class="styles.searchResultCard"
-        @click="goToTodoList(result.todolist.id)"
-      >
-        <!-- En-tête de la TodoList -->
-        <div :class="styles.resultHeader">
-          <div :class="styles.resultTitleSection">
-            <h4 :class="styles.resultTitle">{{ result.todolist.name }}</h4>
-            <div v-if="result.todolist.category" :class="styles.resultCategoryBadge">
-              <span :class="styles.resultCategoryIcon" :style="{ color: result.todolist.category.color }">
-                {{ getCategoryIcon(result.todolist.category.icon) }}
-              </span>
-              <span>{{ result.todolist.category.name }}</span>
-            </div>
-          </div>
-          <span :class="styles.resultCount">{{ result.matchingTodos.length }} résultat(s)</span>
-        </div>
-
-        <!-- Liste des todos trouvés -->
-        <div :class="styles.resultTodos">
-          <div 
-            v-for="todo in result.matchingTodos" 
-            :key="todo.id"
-            :class="[styles.resultTodo, { [styles.completed]: todo.completed }]"
-          >
-            <span :class="styles.todoStatus">
-              {{ todo.completed ? '✅' : '⏳' }}
-            </span>
-            <span :class="styles.todoName" v-html="highlightMatch(todo.name)"></span>
-            <span :class="styles.todoPriority">
-              P{{ todo.priority }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Action -->
-        <div :class="styles.resultAction">
-          <span>Cliquer pour ouvrir →</span>
-        </div>
+      <!-- Liste compacte des todos trouvés -->
+      <div :class="styles.resultTodos">
+        <span 
+          v-for="todo in result.matchingTodos.slice(0, 3)" 
+          :key="todo.id"
+          :class="[styles.resultTodo, { [styles.completed]: todo.completed }]"
+        >
+          {{ todo.completed ? '✓' : '•' }} <span v-html="highlightMatch(todo.name)"></span>
+        </span>
+        <span v-if="result.matchingTodos.length > 3" :class="styles.moreResults">
+          +{{ result.matchingTodos.length - 3 }} autres...
+        </span>
       </div>
     </div>
   </div>
-
+</div>
     <!-- Formulaire de création -->
     <div v-if="showCreateForm" :class="styles.createForm">
       <input v-model="newTodoListName" type="text" placeholder="Nom de la TodoList..."

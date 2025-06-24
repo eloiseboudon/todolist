@@ -26,6 +26,21 @@
       </div>
     </div>
 
+    <div :class="styles.searchBar">
+      <input v-model="searchTerm" type="text" placeholder="Rechercher un todo dans toutes les listes..."
+        :class="styles.searchInput" />
+    </div>
+
+    <div v-if="searchTerm.length >= 2" :class="styles.searchResults">
+      <h3>Résultats de la recherche ({{ filteredTodos.length }})</h3>
+      <ul>
+        <li v-for="todo in filteredTodos" :key="todo.id">
+          {{ todo.name }} <span class="list-name">({{ todo.todolist.name || 'Liste inconnue' }})</span>
+        </li>
+      </ul>
+      <div v-if="filteredTodos.length === 0">Aucun résultat.</div>
+    </div>
+
     <!-- Formulaire de création -->
     <div v-if="showCreateForm" :class="styles.createForm">
       <input v-model="newTodoListName" type="text" placeholder="Nom de la TodoList..."
@@ -95,8 +110,9 @@
           <span :class="styles.categoryName">Aucune catégorie</span>
         </div>
       </div>
-
     </div>
+
+
 
     <!-- État vide -->
     <div v-if="!loading && todolists.length === 0" :class="styles.emptyState">
@@ -136,13 +152,16 @@ const {
   createTodoList,
   deleteTodoList,
   clearError,
-  testConnection
+  testConnection, 
+  loadAllTodos, 
+  allTodos
 } = useTodos();
 
 
 // État local
 const showCreateForm = ref(false);
 const newTodoListName = ref('');
+const searchTerm = ref('');
 
 const categories = ref<Category[]>([]);
 const selectedCategoryId = ref<number | ''>('');
@@ -151,6 +170,7 @@ const saving = ref(false);
 // Charger les TodoLists au montage
 onMounted(() => {
   loadTodoLists();
+  loadAllTodos();
 });
 
 
@@ -202,14 +222,21 @@ const loadCategories = async () => {
   }
 };
 
-
-
 const goToTodoList = (id: number) => {
   router.push(`/todolist/${id}`);
 };
 // Lifecycle
 onMounted(() => {
-    loadCategories();
+  loadCategories();
+});
+
+const filteredTodos = computed(() => {
+  if (!searchTerm.value || searchTerm.value.length < 2) {
+    return [];
+  }
+  return allTodos.value.filter(todo =>
+    (todo.name || '').toLowerCase().includes(searchTerm.value.toLowerCase())
+  );
 });
 
 const testApiConnection = async () => {

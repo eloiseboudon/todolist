@@ -220,7 +220,8 @@ textarea:focus {
   margin: 0;
   display: inline-block;
 }
-svg{
+
+svg {
   width: 20px;
 }
 
@@ -269,6 +270,7 @@ svg{
 .btnSecondary:hover {
   background: var(--success-color);
   color: white;
+  border-color: var(--success-color);
 }
 
 .btnTertiary {
@@ -280,6 +282,7 @@ svg{
 .btnTertiary:hover {
   background: var(--warning-color);
   color: white;
+  border-color: var(--warning-color);
 }
 
 .btnTertiary:disabled {

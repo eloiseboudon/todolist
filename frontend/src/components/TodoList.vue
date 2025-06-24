@@ -7,19 +7,19 @@
           <h2>{{ todolist.name }}</h2>
           <div :class="styles.headerBadges">
             <!-- Badge catégorie (si existe) -->
-            <div v-if="todolist.category" :class="styles.categoryBadge">
-              <span :class="styles.categoryIcon">{{ getCategoryIcon(todolist.category.icon) }}</span>
+            <div v-if="todolist.category" :class="['categoryBadge']">
+              <span :class="['categoryIcon']">{{ getCategoryIcon(todolist.category.icon) }}</span>
               <span>{{ todolist.category.name }}</span>
             </div>
             <!-- Badge nombre de tâches -->
-            <div :class="styles.countBadge">{{ todos.length }} tâche(s)</div>
+            <div :class="['countBadge']">{{ todos.length }} tâche(s)</div>
           </div>
         </div>
       </div>
 
       <!-- 🎯 NOUVEAU : Boutons compacts alignés -->
-      <div :class="styles.headerActions">
-        <button @click="toggleAddForm" :class="styles.btnCompact">
+      <div :class="[styles.headerActions]">
+        <button @click="toggleAddForm" :class="['btnCompact']">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -28,7 +28,7 @@
         </button>
 
         <!-- Tag/Catégorie -->
-        <button @click="showCategoryForm = true" :class="[styles.btnCompact, styles.btnSecondary]">
+        <button @click="showCategoryForm = true" :class="['btnCompact', 'btnSecondary']">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -39,29 +39,29 @@
         </button>
 
         <!-- Export -->
-        <div :class="styles.exportDropdown">
-          <button @click="toggleExportMenu" :class="[styles.btnCompact, styles.btnTertiary]"
+        <div :class="['exportDropdown']">
+          <button @click="toggleExportMenu" :class="['btnCompact', 'btnTertiary']"
             :disabled="todos.length === 0">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="m9 13.5 3 3m0 0 3-3m-3 3v-6" />
             </svg>
             <span>Export</span>
-            <span :class="[styles.dropdownIcon, { [styles.dropdownOpen]: showExportMenu }]">▼</span>
+            <span :class="['dropdownIcon', { ['dropdownOpen']: showExportMenu }]">▼</span>
           </button>
 
           <!-- Menu dropdown -->
-          <div v-if="showExportMenu" :class="styles.exportMenu">
-            <button @click="handleExport('all')" :class="styles.exportMenuItem">
+          <div v-if="showExportMenu" :class="['exportMenu']">
+            <button @click="handleExport('all')" :class="['exportMenuItem']">
               <span>📄</span> Export complet
             </button>
-            <button @click="handleExport('pending')" :class="styles.exportMenuItem">
+            <button @click="handleExport('pending')" :class="['exportMenuItem']">
               <span>🔄</span> Tâches en cours
             </button>
-            <button @click="handleExport('completed')" :class="styles.exportMenuItem">
+            <button @click="handleExport('completed')" :class="['exportMenuItem']">
               <span>✅</span> Tâches terminées
             </button>
-            <button @click="handleExport('alphabetical')" :class="styles.exportMenuItem">
+            <button @click="handleExport('alphabetical')" :class="['exportMenuItem']">
               <span>🔤</span> Ordre alphabétique
             </button>
           </div>
@@ -76,22 +76,22 @@
       @updated="handleCategoryUpdated" />
 
     <!-- Instructions drag & drop (simplifiées) -->
-    <div v-if="todos.length > 1" :class="styles.dragHint">
+    <div v-if="todos.length > 1" :class="['dragHint']">
       💡 Glissez-déposez pour réorganiser
     </div>
 
     <!-- 🎯 CORRIGÉ : Liste des todos avec largeur alignée -->
-    <div v-if="todos.length > 0" :class="styles.todosContainer">
-      <div ref="sortableContainer" :class="styles.sortableList">
-        <div v-for="todo in sortedTodos" :key="`todo-${todo.id}`" :data-id="todo.id" :class="styles.draggableItem">
+    <div v-if="todos.length > 0" :class="['todosContainer']">
+      <div ref="sortableContainer" :class="['sortableList']">
+        <div v-for="todo in sortedTodos" :key="`todo-${todo.id}`" :data-id="todo.id" :class="['draggableItem']">
           <TodoItem :todo="todo" @toggle="handleToggle" @edit="handleEdit" @delete="handleDelete" />
         </div>
       </div>
     </div>
 
     <!-- État vide -->
-    <div v-else :class="styles.emptyState">
-      <div :class="styles.emptyIcon">📝</div>
+    <div v-else :class="['emptyState']">
+      <div :class="['emptyIcon']">📝</div>
       <p><strong>Aucun todo dans cette liste</strong></p>
       <p>Cliquez sur "Ajouter" pour commencer !</p>
     </div>

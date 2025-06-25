@@ -10,8 +10,8 @@
       <input v-model.number="customPriority" type="number" min="1" max="999" placeholder="Priorité"
         :class="styles.priorityInput" title="Priorité optionnelle (ex: 1 = urgent)" @keydown.enter="handleSubmit"
         @keydown.escape="handleCancel" />
-
-      <input v-model="quantity" type="text" placeholder="Quantité"
+{{ todolist.name }}
+      <input v-if="True" v-model="quantity" type="text" placeholder="Quantité"
         :class="styles.quantityInput" @keydown.enter="handleSubmit" @keydown.escape="handleCancel" />
 
       <!-- Boutons d'action groupés -->
@@ -56,6 +56,11 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted } from 'vue';
 import styles from '@/styles/components/SimpleTodoForm.module.css';
+import type { TodoList, Category } from '@/services/api';
+
+interface Props {
+    todolist: TodoList;
+}
 
 interface Emits {
   addTodo: [name: string, priority?: number, quantity?: string];
@@ -63,6 +68,7 @@ interface Emits {
 }
 
 const emit = defineEmits<Emits>();
+const props = defineProps<Props>();
 
 // État local
 const todoName = ref('');

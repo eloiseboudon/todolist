@@ -70,7 +70,7 @@
     </div>
 
     <!-- Formulaires (conservés) -->
-    <SimpleTodoForm v-if="showAddForm" @add-todo="handleAddTodoWithPriority" @cancel="cancelAddTodo" />
+    <SimpleTodoForm v-if="showAddForm" @add-todo="handleAddTodoWithPriority" :todolist="todolist" @cancel="cancelAddTodo" />
 
     <UpdateCategoryTodolistForm v-if="showCategoryForm" :todolist="todolist" @close="showCategoryForm = false"
       @updated="handleCategoryUpdated" />

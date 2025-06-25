@@ -7,6 +7,21 @@ from typing import List
 
 router = APIRouter()
 
+
+@router.post("/", response_model=Category)
+def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
+    """Créer une nouvelle catégorie"""
+    db_category = models.Category(**category.model_dump())
+    try:
+        db.add(db_category)
+        db.commit()
+        db.refresh(db_category)
+        return db_category
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Error creating category")
+
 @router.get("/", response_model=List[Category])
 def get_categories(db: Session = Depends(get_db)):
     """Récupérer toutes les catégories"""

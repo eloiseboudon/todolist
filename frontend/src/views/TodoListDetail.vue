@@ -107,9 +107,13 @@ watch(() => props.id, (newId) => {
   loadTodoList(parseInt(newId));
 });
 
-const handleAddTodoWithPriority = async (name: string, priority?: number) => {
+const handleAddTodoWithPriority = async (
+  name: string,
+  priority?: number,
+  quantity?: string,
+) => {
   try {
-    await addTodo(parseInt(props.id), name, priority);
+    await addTodo(parseInt(props.id), name, priority, quantity);
   } catch (err) {
     console.error('Erreur ajout todo avec priorité - Détail complet:', err);
     if (err instanceof Error) {

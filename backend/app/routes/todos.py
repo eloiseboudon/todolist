@@ -101,6 +101,8 @@ def update_todo(todo_id: int, todo_update: TodoUpdate, db: Session = Depends(get
                     detail="Position must be a positive number"
                 )
             db_todo.priority = todo_update.priority
+        if todo_update.quantity is not None:
+            db_todo.quantity = todo_update.quantity
                 
         db.commit()
         

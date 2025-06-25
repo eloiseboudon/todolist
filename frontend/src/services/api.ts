@@ -13,6 +13,7 @@ export interface Todo {
   name: string;
   completed: boolean;
   priority: number;
+  quantity?: string;
   todolist_id?: number;
   todolist: TodoList;
 }
@@ -29,6 +30,7 @@ export interface CreateTodoRequest {
   name: string;
   completed?: boolean;
   priority?: number;
+  quantity?: string;
 }
 
 export interface CreateTodoListRequest {
@@ -41,6 +43,7 @@ export interface UpdateTodoRequest {
   name: string;
   completed?: boolean;
   priority?: number;
+  quantity?: string;
   todolist_id?: number;
 }
 

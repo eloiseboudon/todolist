@@ -70,7 +70,7 @@
     </div>
 
     <!-- Formulaires (conservés) -->
-    <SimpleTodoForm v-if="showAddForm" @add-todo="handleAddTodoWithPriority" @cancel="cancelAddTodo" />
+    <SimpleTodoForm v-if="showAddForm" @add-todo="handleAddTodoWithPriority" :todolist="todolist" @cancel="cancelAddTodo" />
 
     <UpdateCategoryTodolistForm v-if="showCategoryForm" :todolist="todolist" @close="showCategoryForm = false"
       @updated="handleCategoryUpdated" />
@@ -118,7 +118,7 @@ interface Props {
 }
 
 interface Emits {
-  addTodo: [name: string, priority?: number];
+  addTodo: [name: string, priority?: number, quantity?: string];
   toggleTodo: [id: number];
   editTodo: [todo: Todo];
   deleteTodo: [id: number];
@@ -298,8 +298,12 @@ const cancelAddTodo = () => {
   showAddForm.value = false;
 };
 
-const handleAddTodoWithPriority = (name: string, priority?: number) => {
-  emit('addTodo', name, priority);
+const handleAddTodoWithPriority = (
+  name: string,
+  priority?: number,
+  quantity?: string,
+) => {
+  emit('addTodo', name, priority, quantity);
   showAddForm.value = false;
 };
 

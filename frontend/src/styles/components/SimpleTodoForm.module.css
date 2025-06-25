@@ -80,6 +80,20 @@
   font-weight: var(--font-weight-normal);
 }
 
+.quantityInput{
+  width: 85px;
+  padding: var(--spacing-md) var(--spacing-sm);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-main);
+  text-align: center;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  transition: all var(--transition-fast);
+  font-weight: var(--font-weight-normal);
+}
+
 /* ===== BOUTONS D'ACTION GROUPÉS ===== */
 .actionButtons {
   display: flex;

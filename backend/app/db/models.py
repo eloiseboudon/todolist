@@ -47,6 +47,7 @@ class Todo(Base):
     created_at = Column(DateTime, server_default=func.now())
     completed_at = Column(DateTime, nullable=True)
     description = Column(String, nullable=True)
+    quantity = Column(String, nullable=True)
     
     # Foreign Keys
     todolist_id = Column(Integer, ForeignKey("todolist.id"), nullable=False)

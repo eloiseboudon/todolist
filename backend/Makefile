@@ -83,7 +83,7 @@ migrate-down:
 	$(call run-in-venv, alembic downgrade -1)
 
 migrate-history:
-	$(call run-in-venv, alembic history)
+	$(call run-in-venv, alembic history --verbose)
 
 migrate-current:
 	$(call run-in-venv, alembic current)

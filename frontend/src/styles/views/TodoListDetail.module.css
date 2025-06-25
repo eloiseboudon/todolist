@@ -354,6 +354,12 @@
   }
 }
 
+.addToCourses {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
 /* ===== AMÉLIORATION CONTRASTE ===== */
 @media (prefers-contrast: high) {
   .statCard {

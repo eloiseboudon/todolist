@@ -610,6 +610,23 @@ export function useTodos() {
     }
   };
 
+  const addLinkBetweenTodolist = async (courseId: number, recipeId: number) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const updatedList = await todoListsApi.addLinkBetweenTodolist(courseId, recipeId);
+      if (currentTodolist.value?.id === courseId) {
+        await loadTodoList(courseId);
+      }
+      return updatedList;
+    } catch (err) {
+      error.value = apiUtils.handleError(err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   // Computed
   const sortedTodos = computed(() => {
     return [...currentTodos.value].sort((a, b) => a.priority - b.priority);
@@ -665,6 +682,7 @@ export function useTodos() {
     updateTodo,
     deleteTodo,
     reorderTodos,
+    addLinkBetweenTodolist,
 
     // 🎯 FONCTIONS D'EXPORT - Vérifiez qu'elles sont toutes là
     exportTodoListWithOptions,

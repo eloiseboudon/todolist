@@ -48,7 +48,7 @@ const emit = defineEmits<Emits>();
 
 
 const isRecipeType = computed(() => {
-  return props.todo.todolist?.category?.name?.toLowerCase() === 'recette';
+  return (props.todo.todolist?.category?.name?.toLowerCase() === 'recette') || (props.todo.todolist?.category?.name?.toLowerCase() === 'courses');
 });
 
 const { confirmDelete } = useConfirm();

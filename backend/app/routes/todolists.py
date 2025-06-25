@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from app.schemas import TodoList, TodoListCreate, Todo, TodoCreate, TodoListUpdate
+from app.schemas import TodoList, TodoListCreate, Todo, TodoCreate, TodoListUpdate, Link
 from app.db import models
 from app.db.session import get_db
 from typing import List, Optional
@@ -37,6 +37,17 @@ def recalculate_priorities(db: Session, todolist_id: int):
     
     db.commit()
     return len(active_todos) + len(completed_todos)
+
+@router.get("/", response_model=List[TodoList])
+def get_todolists(db: Session = Depends(get_db)):
+    """Récupérer toutes les TodoLists"""
+    return db.query(models.TodoList).all()
+
+@router.get("/links/all", response_model=List[Link])  
+def get_all_todolist_links(db: Session = Depends(get_db)):
+    """Récupérer toutes les relations entre les TodoLists"""
+    return db.query(models.Link).all()
+
 
 @router.post("/", response_model=TodoList)
 def create_todolist(todolist: TodoListCreate, db: Session = Depends(get_db)):
@@ -88,11 +99,6 @@ def create_todolist(todolist: TodoListCreate, db: Session = Depends(get_db)):
             detail="Error creating TodoList"
         )
 
-@router.get("/", response_model=List[TodoList])
-def get_todolists(db: Session = Depends(get_db)):
-    """Récupérer toutes les TodoLists"""
-    return db.query(models.TodoList).all()
-
 @router.get("/{todolist_id}", response_model=TodoList)  
 def get_todolist(todolist_id: int, db: Session = Depends(get_db)):
     """Récupérer une TodoList par ID"""
@@ -104,6 +110,7 @@ def get_todolist(todolist_id: int, db: Session = Depends(get_db)):
         )
     return todolist
 
+      
 @router.put("/{todolist_id}", response_model=TodoList)
 def update_todolist(todolist_id: int, todolist_update: TodoListUpdate, db: Session = Depends(get_db)):
     """Mettre à jour une TodoList"""
@@ -138,6 +145,7 @@ def update_todolist(todolist_id: int, todolist_update: TodoListUpdate, db: Sessi
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error updating todolist"
         )
+
 @router.post("/{todolist_id}/todos", response_model=Todo)
 def add_todo_to_list(todolist_id: int, todo: TodoCreate, db: Session = Depends(get_db)):
     """Ajouter une nouvelle todo à une TodoList"""
@@ -333,3 +341,54 @@ def generate_courses(recipe_ids: List[int], db: Session = Depends(get_db)):
     recalculate_priorities(db, course_list.id)
     db.refresh(course_list)
     return course_list
+
+
+
+@router.post("/{todolist_id_parent}/add_link/{todolist_id_child}", response_model=Link)
+def add_link(todolist_id_parent : int, todolist_id_child :int ,db: Session = Depends(get_db)):
+    """Ajouter une relation entre deux TodoLists"""
+
+    # Vérifier que les IDs sont différents
+    if todolist_id_parent == todolist_id_child:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Une TodoList ne peut pas être liée à elle-même"
+        )
+    
+    # Vérifier que les deux TodoLists existent
+    parent_todolist = db.query(models.TodoList).filter(models.TodoList.id == todolist_id_parent).first()
+    child_todolist = db.query(models.TodoList).filter(models.TodoList.id == todolist_id_child).first()
+    if not parent_todolist:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Parent TodoList with id {todolist_id_parent} not found"
+        )
+    if not child_todolist:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Child TodoList with id {todolist_id_child} not found"
+        )   
+    db_link = models.Link(
+        todolist_id_parent=todolist_id_parent,
+        todolist_id_child=todolist_id_child
+    )
+    try:
+        db.add(db_link)
+        db.commit()
+        db.refresh(db_link) 
+        return db_link
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Link already exists"
+        )
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error adding link"
+        )
+   
+    
+

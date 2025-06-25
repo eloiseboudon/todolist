@@ -3,8 +3,8 @@
     <div :class="styles.todoContent">
       <input type="checkbox" :checked="todo.completed" @change="toggleTodo" :class="styles.todoCheckbox" />
       <span :class="styles.todoName">{{ todo.name }}</span>
-      <span v-if="todo.quantity" :class="styles.todoQuantity">{{ todo.quantity }}</span>
-      <span :class="styles.todoPriority">{{ todo.priority }}</span>
+      <span v-if="isRecipeType" :class="styles.todoInfo">{{ todo.quantity }}</span>
+      <span v-if="!isRecipeType" :class="styles.todoInfo">{{ todo.priority }}</span>
     </div>
 
     <div :class="styles.todoActions">
@@ -28,6 +28,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import styles from '@/styles/components/TodoItem.module.css';
 import { useConfirm } from '@/composables/useConfirm';
 import type { Todo } from '@/services/api';
@@ -44,6 +45,11 @@ interface Emits {
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
+
+
+const isRecipeType = computed(() => {
+  return props.todo.todolist?.category?.name?.toLowerCase() === 'recette';
+});
 
 const { confirmDelete } = useConfirm();
 

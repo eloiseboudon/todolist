@@ -60,7 +60,7 @@
   color: var(--text-secondary);
 }
 
-.todoPriority {
+.todoInfo {
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
   background: var(--bg-hover);
@@ -70,7 +70,7 @@
   transition: all var(--transition-fast);
 }
 
-.todoItem:hover .todoPriority {
+.todoItem:hover .todoInfo {
   background: var(--primary-light);
   color: var(--primary-color);
 }

@@ -7,12 +7,12 @@
         required />
 
       <!-- Champ priorité compact -->
-      <input v-model.number="customPriority" type="number" min="1" max="999" placeholder="Priorité"
+      <input v-if="!isRecipeType" v-model.number="customPriority" type="number" min="1" max="999" placeholder="Priorité"
         :class="styles.priorityInput" title="Priorité optionnelle (ex: 1 = urgent)" @keydown.enter="handleSubmit"
         @keydown.escape="handleCancel" />
-{{ todolist.name }}
-      <input v-if="True" v-model="quantity" type="text" placeholder="Quantité"
-        :class="styles.quantityInput" @keydown.enter="handleSubmit" @keydown.escape="handleCancel" />
+
+      <input v-if="isRecipeType" v-model="quantity" type="text" placeholder="Quantité" :class="styles.quantityInput"
+        @keydown.enter="handleSubmit" @keydown.escape="handleCancel" />
 
       <!-- Boutons d'action groupés -->
       <div :class="styles.actionButtons">
@@ -54,12 +54,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from 'vue';
+import { ref, nextTick, onMounted, computed } from 'vue';
 import styles from '@/styles/components/SimpleTodoForm.module.css';
 import type { TodoList, Category } from '@/services/api';
 
 interface Props {
-    todolist: TodoList;
+  todolist: TodoList;
 }
 
 interface Emits {
@@ -77,12 +77,17 @@ const quantity = ref('');
 const nameInput = ref<HTMLInputElement>();
 const showTooltip = ref(false);
 
+const isRecipeType = computed(() => {
+  return props.todolist?.category?.name?.toLowerCase() === 'recette';
+});
+
 // Méthodes principales
 const handleSubmit = () => {
   if (!todoName.value.trim()) return;
 
   const priority = customPriority.value && customPriority.value > 0 ? customPriority.value : undefined;
-  const qty = quantity.value.trim() || undefined;
+  const qty = isRecipeType.value && quantity.value.trim() ? quantity.value.trim() : undefined;
+
 
   emit('addTodo', todoName.value.trim(), priority, qty);
   resetForm();

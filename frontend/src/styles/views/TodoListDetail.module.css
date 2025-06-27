@@ -116,6 +116,10 @@
   gap: var(--spacing-lg);
 }
 
+.addLinkButton {
+  margin-bottom: var(--spacing-md);
+}
+
 .todolistCard {
   background: var(--bg-card);
   border-radius: var(--radius-xl);

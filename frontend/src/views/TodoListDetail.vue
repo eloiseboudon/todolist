@@ -81,13 +81,17 @@
 
       <div v-else :class="styles.linksList">
         <p>Cliquez sur une recette pour la consulter.</p>
-        <button @click="add_todo_to_todolist_parent" :class="styles.addLinkButton">
+        <button
+          v-if="currentTodolist.category && currentTodolist.category.name.toLowerCase() === 'courses'"
+          @click="handlePopulateFromLinks"
+          :class="['btnCompact', 'btnSecondary', styles.addLinkButton]"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M12 6v6m0 0v6m0-6h6m-6 0H6m3.75-9a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm10.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
           </svg>
-          Ajouter ingrédients à la liste de course
+          Ajouter les ingrédients
         </button>
         <div :class="styles.linksContainer">
           <div v-for="link in currentLinks" :key="link.id" :class="[
@@ -145,6 +149,7 @@ const {
   deleteTodo,
   reorderTodos,
   addLinkBetweenTodolist,
+  populateFromLinks,
   clearError
 } = useTodos();
 
@@ -241,6 +246,14 @@ const handleAddToCourse = async () => {
     await addLinkBetweenTodolist(parseInt(props.id), selectedCourseId.value);
   } catch (err) {
     console.error('Erreur ajout aux courses:', err);
+  }
+};
+
+const handlePopulateFromLinks = async () => {
+  try {
+    await populateFromLinks(parseInt(props.id));
+  } catch (err) {
+    console.error('Erreur population courses:', err);
   }
 };
 

@@ -163,6 +163,12 @@ export const todoListsApi = {
     });
   },
 
+  async populateFromLinks(todolistId: number): Promise<TodoList> {
+    return apiRequest<TodoList>(`/todolists/${todolistId}/populate_from_links`, {
+      method: 'POST',
+    });
+  },
+
   // Supprimer le lien entre une todolist et une recette
   async removeLinkBetweenTodolist(recipeId: number, courseId: number): Promise<TodoList> {
     return apiRequest<TodoList>(`/todolists/${courseId}/remove_link/${recipeId}`, {

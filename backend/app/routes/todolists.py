@@ -406,3 +406,38 @@ def add_link(todolist_id_parent : int, todolist_id_child :int ,db: Session = Dep
    
     
 
+
+@router.post("/{todolist_id}/populate_from_links", response_model=TodoList)
+def populate_from_links(todolist_id: int, db: Session = Depends(get_db)):
+    """Ajoute tous les todos des recettes liées à une todolist"""
+
+    todolist = db.query(models.TodoList).filter(models.TodoList.id == todolist_id).first()
+    if not todolist:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todolist not found")
+
+    linked_recipes = (
+        db.query(models.TodoList)
+        .join(models.Link, models.Link.todolist_id_child == models.TodoList.id)
+        .filter(models.Link.todolist_id_parent == todolist_id)
+        .all()
+    )
+
+    if not linked_recipes:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No linked recipes found")
+
+    for recipe in linked_recipes:
+        todos = db.query(models.Todo).filter(models.Todo.todolist_id == recipe.id).all()
+        for todo in todos:
+            new_todo = models.Todo(
+                name=todo.name,
+                completed=False,
+                priority=9999,
+                quantity=todo.quantity,
+                todolist_id=todolist_id,
+            )
+            db.add(new_todo)
+
+    db.commit()
+    recalculate_priorities(db, todolist_id)
+    db.refresh(todolist)
+    return todolist

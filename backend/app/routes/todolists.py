@@ -109,7 +109,6 @@ def get_todolist(todolist_id: int, db: Session = Depends(get_db)):
             detail="Todolist not found"
         )
     return todolist
-
       
 @router.put("/{todolist_id}", response_model=TodoList)
 def update_todolist(todolist_id: int, todolist_update: TodoListUpdate, db: Session = Depends(get_db)):
@@ -342,6 +341,21 @@ def generate_courses(recipe_ids: List[int], db: Session = Depends(get_db)):
     db.refresh(course_list)
     return course_list
 
+@router.get("/{todolis_id_parent}/links", response_model=List[TodoList])  
+def get_all_todolist_links_by_parent(todolis_id_parent : int, db: Session = Depends(get_db)):
+    """Récupérer toutes les TodoLists liées à une TodoList parent"""
+    child_todolists = (
+        db.query(models.TodoList)
+        .join(models.Link, models.Link.todolist_id_child == models.TodoList.id)
+        .filter(models.Link.todolist_id_parent == todolis_id_parent)
+        .all()
+    )
+    if not child_todolists:
+        raise HTTPException(
+            status_code=status.HTTP_204_NO_CONTENT, 
+            detail=f"No child TodoLists found for parent with id {todolis_id_parent}"
+        )
+    return child_todolists
 
 
 @router.post("/{todolist_id_parent}/add_link/{todolist_id_child}", response_model=Link)

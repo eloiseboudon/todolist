@@ -8,6 +8,7 @@ import {
 } from '../services/api';
 import { useNotifications } from './useNotifications';
 import type { ExportOptions, ExportData, ExportMetadata } from '@/types/export';
+import { addSyntheticLeadingComment } from 'typescript';
 
 
 
@@ -41,6 +42,8 @@ const currentTodos = ref<Todo[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const allTodos = ref<Todo[]>([]);
+// const linksList = ref<TodoList | null>(null);
+const currentLinks = ref<TodoList[] | null>(null);
 
 
 const loadAllTodos = async () => {
@@ -627,6 +630,23 @@ export function useTodos() {
     }
   };
 
+  const loadTodoListLinks = async (todolist_id_parent: number) => {
+    try{
+      loading.value = true;
+      error.value = null;
+
+      // Récupérer la liste des liens
+      currentLinks.value = await todoListsApi.getLinksbyTodolistId(todolist_id_parent);
+    } 
+    // catch (err) {
+    //   error.value = apiUtils.handleError(err);
+    //   console.error('Erreur lors du chargement des liens:', err);
+    // }
+    finally {
+      loading.value = false;
+    }
+  };
+
   // Computed
   const sortedTodos = computed(() => {
     return [...currentTodos.value].sort((a, b) => a.priority - b.priority);
@@ -662,6 +682,7 @@ export function useTodos() {
     todolists,
     currentTodolist,
     currentTodos,
+    currentLinks,
     loading,
     error,
 
@@ -675,6 +696,7 @@ export function useTodos() {
     loadTodoList,
     createTodoList,
     deleteTodoList,
+    loadTodoListLinks,
 
     // Actions Todos
     addTodo,
@@ -692,7 +714,6 @@ export function useTodos() {
     // Utilitaires
     clearError,
     testConnection,
-
     //Actions de recherche
     allTodos,
     loadAllTodos

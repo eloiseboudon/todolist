@@ -1,5 +1,6 @@
 // Types pour l'API
 
+
 export interface Category {
   id: number;
   name: string;
@@ -160,6 +161,18 @@ export const todoListsApi = {
     return apiRequest<TodoList>(`/todolists/${courseId}/add_link/${recipeId}`, {
       method: 'POST',
     });
+  },
+
+  // Supprimer le lien entre une todolist et une recette
+  async removeLinkBetweenTodolist(recipeId: number, courseId: number): Promise<TodoList> {
+    return apiRequest<TodoList>(`/todolists/${courseId}/remove_link/${recipeId}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Récupérer les liens entre une todolist et des recettes
+  async getLinksbyTodolistId(todolistId: number): Promise<TodoList[]> {
+    return apiRequest<TodoList[]>(`/todolists/${todolistId}/links`);
   },
 };
 

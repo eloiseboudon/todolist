@@ -82,7 +82,7 @@
       <div v-else :class="styles.linksList">
         <p>Cliquez sur une recette pour la consulter.</p>
         <button
-          v-if="currentTodolist.category && currentTodolist.category.name.toLowerCase() === 'courses'"
+          v-if="currentTodolist?.category && currentTodolist.category.name.toLowerCase() === 'courses'"
           @click="handlePopulateFromLinks"
           :class="['btnCompact', 'btnSecondary', styles.addLinkButton]"
         >
@@ -91,7 +91,7 @@
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M12 6v6m0 0v6m0-6h6m-6 0H6m3.75-9a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm10.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
           </svg>
-          Ajouter les ingrédients
+          Ajouter les éléments de la liste
         </button>
         <div :class="styles.linksContainer">
           <div v-for="link in currentLinks" :key="link.id" :class="[

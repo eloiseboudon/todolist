@@ -293,17 +293,6 @@
   max-width: 120px;
 }
 
-/* Hover effect pour les badges */
-.todolistCard:hover .categoryBadge {
-
-}
-
-.todolistCard:hover .noCategoryBadge {
-
-}
-
-/* Styles à ajouter/remplacer dans Home.module.css */
-
 /* Cartes TodoList avec couleur de catégorie */
 .todolistCard {
   background: var(--bg-primary);
@@ -324,9 +313,6 @@
     color-mix(in srgb, var(--category-color) 12%, var(--bg-primary)) 100%
   );
   border: 1px solid color-mix(in srgb, var(--category-color) 30%, var(--border-color));
-  
-  /* Effet de bordure colorée subtile */
-  /* border-left: 4px solid var(--category-color); */
 }
 
 /* Carte sans catégorie - style par défaut */

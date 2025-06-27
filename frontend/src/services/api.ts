@@ -1,5 +1,6 @@
 // Types pour l'API
 
+
 export interface Category {
   id: number;
   name: string;
@@ -36,7 +37,7 @@ export interface CreateTodoRequest {
 export interface CreateTodoListRequest {
   name: string;
   todos?: CreateTodoRequest[];
-  category_id?: number; 
+  category_id?: number;
 }
 
 export interface UpdateTodoRequest {
@@ -154,6 +155,25 @@ export const todoListsApi = {
       body: JSON.stringify(todoIds),
     });
   },
+
+  // Ajouter tous les todos d'une recette à une liste de courses existante
+  async addLinkBetweenTodolist(recipeId: number, courseId: number): Promise<TodoList> {
+    return apiRequest<TodoList>(`/todolists/${courseId}/add_link/${recipeId}`, {
+      method: 'POST',
+    });
+  },
+
+  // Supprimer le lien entre une todolist et une recette
+  async removeLinkBetweenTodolist(recipeId: number, courseId: number): Promise<TodoList> {
+    return apiRequest<TodoList>(`/todolists/${courseId}/remove_link/${recipeId}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Récupérer les liens entre une todolist et des recettes
+  async getLinksbyTodolistId(todolistId: number): Promise<TodoList[]> {
+    return apiRequest<TodoList[]>(`/todolists/${todolistId}/links`);
+  },
 };
 
 
@@ -173,14 +193,14 @@ export const categoriesApi = {
   // Récupérer une catégorie par ID
   async getById(id: number): Promise<Category> {
     return apiRequest<Category>(`/categories/${id}`);
-  }, 
+  },
 
-  async updateCategory(data: CreateTodoListRequest):Promise<Category> {
+  async updateCategory(data: CreateTodoListRequest): Promise<Category> {
     return apiRequest<Category>('/categories/addTodoList', {
       method: 'POST',
       body: JSON.stringify(data),
     });
-  }, 
+  },
 };
 
 // API Todos

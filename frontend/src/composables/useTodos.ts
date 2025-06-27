@@ -630,6 +630,23 @@ export function useTodos() {
     }
   };
 
+  const populateFromLinks = async (todolistId: number) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const updated = await todoListsApi.populateFromLinks(todolistId);
+      if (currentTodolist.value?.id === todolistId) {
+        await loadTodoList(todolistId);
+      }
+      return updated;
+    } catch (err) {
+      error.value = apiUtils.handleError(err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const loadTodoListLinks = async (todolist_id_parent: number) => {
     try{
       loading.value = true;
@@ -705,6 +722,7 @@ export function useTodos() {
     deleteTodo,
     reorderTodos,
     addLinkBetweenTodolist,
+    populateFromLinks,
 
     // 🎯 FONCTIONS D'EXPORT - Vérifiez qu'elles sont toutes là
     exportTodoListWithOptions,

@@ -156,16 +156,22 @@ export const todoListsApi = {
     });
   },
 
-  // Ajouter tous les todos d'une recette à une liste de courses existante
-  async addLinkBetweenTodolist(recipeId: number, courseId: number): Promise<TodoList> {
-    return apiRequest<TodoList>(`/todolists/${courseId}/add_link/${recipeId}`, {
+  // Ajouter tous les todos d'une enfant à une todolist parent
+  async addLinkBetweenTodolist(childId: number, parentId: number): Promise<TodoList> {
+    return apiRequest<TodoList>(`/todolists/${parentId}/add_link/${childId}`, {
       method: 'POST',
     });
   },
 
-  // Supprimer le lien entre une todolist et une recette
-  async removeLinkBetweenTodolist(recipeId: number, courseId: number): Promise<TodoList> {
-    return apiRequest<TodoList>(`/todolists/${courseId}/remove_link/${recipeId}`, {
+  async populateFromLinks(todolistId: number): Promise<TodoList> {
+    return apiRequest<TodoList>(`/todolists/${todolistId}/populate_from_links`, {
+      method: 'POST',
+    });
+  },
+
+  // Supprimer le lien entre une todolist parent et enfent
+  async removeLinkBetweenTodolist(childId: number, parentId: number): Promise<TodoList> {
+    return apiRequest<TodoList>(`/todolists/${parentId}/remove_link/${childId}`, {
       method: 'DELETE',
     });
   },

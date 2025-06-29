@@ -6,12 +6,13 @@
 }
 
 .header {
-  background: var(--bg-primary);
+  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
   border-bottom: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 100;
+  backdrop-filter: blur(6px);
 }
 
 .nav {
@@ -22,6 +23,7 @@
   justify-content: space-between;
   align-items: center;
   height: 64px;
+  gap: var(--spacing-lg);
 }
 
 .navLinks {
@@ -117,7 +119,6 @@
   color: var(--error-color);
   border-radius: var(--radius-lg);
 }
-
 
 .btnDismiss,
 .btnRetry {

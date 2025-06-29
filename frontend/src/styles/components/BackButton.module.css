@@ -1,0 +1,19 @@
+.backBtn {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  transition: background var(--transition-fast);
+}
+
+.backBtn:hover {
+  background: var(--bg-hover);
+}
+
+.backBtn svg {
+  width: 18px;
+}

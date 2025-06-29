@@ -1,0 +1,37 @@
+/* Theme inspired by antoniouve.com */
+:root {
+  --primary-color: #7c3aed;
+  --primary-hover: #6b21a8;
+  --primary-light: #f5f3ff;
+
+  --secondary-color: #60a5fa;
+  --secondary-hover: #3b82f6;
+
+  --bg-primary: #fafafa;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-hover: #e5e7eb;
+
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+
+  --border-color: #e5e7eb;
+  --border-hover: #d1d5db;
+  --border-focus: #7c3aed;
+
+  --font-family-main: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+[data-theme='dark'] {
+  --bg-primary: #1e1b4b;
+  --bg-secondary: #0f172a;
+  --bg-card: #1e1b4b;
+  --bg-hover: #312e81;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+
+  --border-color: #312e81;
+  --border-hover: #4338ca;
+}

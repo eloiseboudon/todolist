@@ -4,6 +4,7 @@ import App from './App.vue'
 
 // Import des styles globaux
 import './styles/global.css'
+import './styles/theme-antoniouve.css'
 
 // Configuration du routeur
 const router = createRouter({
@@ -12,20 +13,20 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: () => import('./views/Home.vue')
+      component: () => import('./views/Home.vue'),
     },
     {
       path: '/todolist/:id',
       name: 'TodoListDetail',
       component: () => import('./views/TodoListDetail.vue'),
-      props: true
+      props: true,
     },
     {
       path: '/statistics',
       name: 'Statistics',
-      component: () => import('./views/Statistics.vue')
-    }
-  ]
+      component: () => import('./views/Statistics.vue'),
+    },
+  ],
 })
 
 // Création et montage de l'application

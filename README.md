@@ -104,3 +104,8 @@ The key's randomart image is:
 **Eloise Boudon**
 - GitHub: [@eloiseboudon](https://github.com/eloiseboudon)
 - Email: boudon.eloise@gmail.com
+
+## 📐 Style Guide
+
+Un nouveau style inspiré par [Fictional Typeface](https://fictional-typeface.com/) est disponible.
+Consultez [docs/STYLE_GUIDE.md](docs/STYLE_GUIDE.md) pour plus de détails.

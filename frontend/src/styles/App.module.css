@@ -6,13 +6,19 @@
 }
 
 .header {
-  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+  background: var(--primary-gradient);
   border-bottom: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(6px);
+  color: var(--text-white);
+  backdrop-filter: blur(8px);
+}
+
+.header .backBtn {
+  color: var(--text-white);
+  border-color: var(--text-white);
 }
 
 .nav {
@@ -33,7 +39,7 @@
 
 .navLink {
   font-weight: var(--font-weight-medium);
-  color: var(--text-secondary) !important;
+  color: var(--text-white) !important;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
@@ -41,25 +47,24 @@
 }
 
 .navLink:hover {
-  color: var(--primary-color) !important;
-  background: var(--bg-hover);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .navLink.router-link-active {
-  color: var(--primary-color) !important;
-  background: var(--primary-light);
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--text-white) !important;
 }
 
 .navLink svg {
   width: 20px;
-  color: var(--secondary-color);
+  color: var(--text-white);
   margin-right: var(--spacing-xs);
 }
 
 .navLink:hover svg,
 .navLink svg:hover {
-  color: var(--primary-color) !important;
-  background: var(--bg-hover);
+  color: var(--text-white) !important;
+  background: transparent;
 }
 
 .main {

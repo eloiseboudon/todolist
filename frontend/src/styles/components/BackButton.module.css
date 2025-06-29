@@ -1,13 +1,15 @@
 .backBtn {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  background: transparent;
+  border: 1px solid var(--text-primary);
   color: var(--text-primary);
   padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
-  transition: background var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .backBtn:hover {

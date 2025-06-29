@@ -43,14 +43,14 @@
 
       <div :class="styles.addToCourses">
         <label for="courseSelect">Ajouter à la todolist :</label>
-        <select id="courseSelect" v-model="selectedCourseId">
+        <select id="courseSelect" v-model="selectedListId">
           <option :value="null" disabled>Choisir une liste</option>
           <!-- a modifier cousrLists : allLists -->
-          <option v-for="list in courseLists" :key="list.id" :value="list.id">
+          <option v-for="list in todolists" :key="list.id" :value="list.id">
             {{ list.name }}
           </option>
         </select>
-        <button @click="handleAddToCourse" :disabled="!selectedCourseId">Ajouter</button>
+        <button @click="handleAddToCourse" :disabled="!selectedListId">Ajouter</button>
       </div>
 
       <!-- 🎯 STATISTIQUES STYLISÉES EN CARRÉS -->
@@ -85,7 +85,6 @@
             stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-
           Ajouter les éléments de la liste
         </button>
         <div :class="styles.linksContainer">
@@ -162,12 +161,8 @@ const goToTodoList = (id: number) => {
   router.push(`/todolist/${id}`);
 };
 
-const selectedCourseId = ref<number | null>(null);
-const courseLists = computed(() => {
-  return todolists.value.filter(
-    (t) => t.category && t.category.name.toLowerCase() === 'courses'
-  );
-});
+const selectedListId = ref<number | null>(null);
+
 
 const handleAddTodoWithPriority = async (
   name: string,
@@ -236,9 +231,9 @@ const handleReorderTodos = async (todoIds: number[]) => {
 };
 
 const handleAddToCourse = async () => {
-  if (!selectedCourseId.value) return;
+  if (!selectedListId.value) return;
   try {
-    await addLinkBetweenTodolist(parseInt(props.id), selectedCourseId.value);
+    await addLinkBetweenTodolist(parseInt(props.id), selectedListId.value);
   } catch (err) {
     console.error('Erreur ajout aux courses:', err);
   }

@@ -651,9 +651,8 @@ export function useTodos() {
     try {
       loading.value = true;
       error.value = null;
-
-      // Récupérer la liste des liens
       currentLinks.value = await todoListsApi.getLinksbyTodolistId(todolist_id_parent);
+      console.log('Liens chargés:', currentLinks.value);
     }
     catch (err) {
       error.value = apiUtils.handleError(err);

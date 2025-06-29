@@ -2,6 +2,13 @@
    VARIABLES CSS COMMUNES - TODOLIST APP
    ======================================== */
 
+@font-face {
+  font-family: 'Fictional Sans';
+  src: url('../assets/fonts/FictionalSans.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   /* === COULEURS PRINCIPALES === */
   --primary-color: #ec4899;
@@ -149,6 +156,8 @@ body {
 }
 body[data-style="fictional"] {
   font-family: var(--font-family-fictional);
+  background: linear-gradient(135deg, #ff80ab, #ff1744);
+  color: #ffffff;
 }
 
 

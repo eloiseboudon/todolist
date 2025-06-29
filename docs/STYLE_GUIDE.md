@@ -3,6 +3,15 @@
 Ce guide propose un nouveau style inspiré par [Fictional Typeface](https://fictional-typeface.com/). Il introduit une nouvelle police principale **Fictional Sans** et quelques recommandations de design.
 
 ## Police
+- Importez la police via une règle `@font-face` :
+
+```css
+@font-face {
+  font-family: 'Fictional Sans';
+  src: url('../assets/fonts/FictionalSans.woff2') format('woff2');
+}
+```
+
 - Utiliser `Fictional Sans` comme police par défaut quand la variable CSS `--font-family-fictional` est activée.
 - Prévoir une police de secours générique `sans-serif`.
 
@@ -15,6 +24,8 @@ Ce guide propose un nouveau style inspiré par [Fictional Typeface](https://fict
 
 body[data-style="fictional"] {
   font-family: var(--font-family-fictional);
+  background: linear-gradient(135deg, #ff80ab, #ff1744);
+  color: #ffffff;
 }
 ```
 

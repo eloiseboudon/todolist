@@ -461,12 +461,10 @@ export function useTodos() {
 
       try {
         await todosApi.delete(id);
-
         // 🎯 CORRECTION : Recharger toute la TodoList pour avoir les priorités à jour
         if (currentTodolist.value) {
           await loadTodoList(currentTodolist.value.id);
         }
-
         todoDeleted(todoName);
       } catch (err) {
         const errorMessage = apiUtils.handleError(err);
@@ -488,7 +486,6 @@ export function useTodos() {
     quantity?: string,
   ) => {
     await preserveScrollPosition(async () => {
-
       loading.value = true;
       error.value = null;
 
@@ -613,13 +610,13 @@ export function useTodos() {
     }
   };
 
-  const addLinkBetweenTodolist = async (courseId: number, recipeId: number) => {
+  const addLinkBetweenTodolist = async (parendId: number, childId: number) => {
     loading.value = true;
     error.value = null;
     try {
-      const updatedList = await todoListsApi.addLinkBetweenTodolist(courseId, recipeId);
-      if (currentTodolist.value?.id === courseId) {
-        await loadTodoList(courseId);
+      const updatedList = await todoListsApi.addLinkBetweenTodolist(parendId, childId);
+      if (currentTodolist.value?.id === parendId) {
+        await loadTodoList(parendId);
       }
       return updatedList;
     } catch (err) {
@@ -652,11 +649,9 @@ export function useTodos() {
       loading.value = true;
       error.value = null;
       currentLinks.value = await todoListsApi.getLinksbyTodolistId(todolist_id_parent);
-      console.log('Liens chargés:', currentLinks.value);
     }
     catch (err) {
       error.value = apiUtils.handleError(err);
-      console.error('Erreur lors du chargement des liens:', err);
       currentLinks.value = []; // Valeur par défaut
     }
     finally {
@@ -676,7 +671,6 @@ export function useTodos() {
   const pendingTodos = computed(() => {
     return currentTodos.value.filter(todo => !todo.completed);
   });
-
 
   // Fonction de nettoyage des erreurs
   const clearError = () => {

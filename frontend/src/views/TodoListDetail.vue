@@ -41,17 +41,16 @@
         @toggleTodo="handleToggleTodo" @editTodo="handleEditTodo" @deleteTodo="handleDeleteTodo"
         @reorderTodos="handleReorderTodos" @categoryUpdated="handleCategoryUpdated" />
 
-      <div
-        v-if="currentTodolist.category && currentTodolist.category.name.toLowerCase() === 'recette' && courseLists.length"
-        :class="styles.addToCourses">
-        <label for="courseSelect">Ajouter aux courses :</label>
-        <select id="courseSelect" v-model="selectedCourseId">
+      <div :class="styles.addToCourses">
+        <label for="courseSelect">Ajouter à la todolist :</label>
+        <select id="courseSelect" v-model="selectedListId">
           <option :value="null" disabled>Choisir une liste</option>
-          <option v-for="list in courseLists" :key="list.id" :value="list.id">
+          <!-- a modifier cousrLists : allLists -->
+          <option v-for="list in todolists" :key="list.id" :value="list.id">
             {{ list.name }}
           </option>
         </select>
-        <button @click="handleAddToCourse" :disabled="!selectedCourseId">Ajouter</button>
+        <button @click="handleAddToCourse" :disabled="!selectedListId">Ajouter</button>
       </div>
 
       <!-- 🎯 STATISTIQUES STYLISÉES EN CARRÉS -->
@@ -73,23 +72,18 @@
       </div>
     </div>
     <div :class="styles.link">
-      <!-- à variabiliser pour les autres catégories que les recettes -->
-      <h2>👨‍🍳 Recettes associées</h2>
+
+      <h2>👨‍🍳 Todolist associées</h2>
       <div v-if="currentLinks?.length === 0" :class="styles.noLinks">
         <p>Aucun lien associé.</p>
       </div>
 
       <div v-else :class="styles.linksList">
-        <p>Cliquez sur une recette pour la consulter.</p>
-        <button
-          v-if="currentTodolist?.category && currentTodolist.category.name.toLowerCase() === 'courses'"
-          @click="handlePopulateFromLinks"
-          :class="['btnCompact', 'btnSecondary', styles.addLinkButton]"
-        >
+        <p>Cliquez sur une todolist pour la consulter.</p>
+        <button @click="handlePopulateFromLinks" :class="['btnCompact', 'btnSecondary', styles.addLinkButton]">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6m3.75-9a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm10.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
           Ajouter les éléments de la liste
         </button>
@@ -98,10 +92,10 @@
             styles.todolistCard,
             link.category ? styles.todolistCardWithCategory : styles.todolistCardDefault
           ]" :style="link.category ? {
-          '--category-color': link.category.color,
-          '--category-color-light': link.category.color + '15',
-          '--category-color-hover': link.category.color + '25'
-        } : {}" @click="goToTodoList(link.id)">
+            '--category-color': link.category.color,
+            '--category-color-light': link.category.color + '15',
+            '--category-color-hover': link.category.color + '25'
+          } : {}" @click="goToTodoList(link.id)">
             <div :class="styles.cardHeader">
               <h3>{{ link.name }}</h3>
             </div>
@@ -153,26 +147,25 @@ const {
   clearError
 } = useTodos();
 
-// Charger les données au montage et quand l'ID change
+// Charger les données au montage 
 onMounted(() => {
   loadTodoList(parseInt(props.id));
   loadTodoLists();
   loadTodoListLinks(parseInt(props.id));
 });
 
+// Charger les données quand l'ID change
 watch(() => props.id, (newId) => {
   loadTodoList(parseInt(newId));
+  loadTodoListLinks(parseInt(newId));
 });
+
 const goToTodoList = (id: number) => {
   router.push(`/todolist/${id}`);
 };
 
-const selectedCourseId = ref<number | null>(null);
-const courseLists = computed(() => {
-  return todolists.value.filter(
-    (t) => t.category && t.category.name.toLowerCase() === 'courses'
-  );
-});
+const selectedListId = ref<number | null>(null);
+
 
 const handleAddTodoWithPriority = async (
   name: string,
@@ -241,9 +234,9 @@ const handleReorderTodos = async (todoIds: number[]) => {
 };
 
 const handleAddToCourse = async () => {
-  if (!selectedCourseId.value) return;
+  if (!selectedListId.value) return;
   try {
-    await addLinkBetweenTodolist(parseInt(props.id), selectedCourseId.value);
+    await addLinkBetweenTodolist(parseInt(props.id), selectedListId.value);
   } catch (err) {
     console.error('Erreur ajout aux courses:', err);
   }

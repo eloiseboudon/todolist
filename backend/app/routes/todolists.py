@@ -350,12 +350,7 @@ def get_all_todolist_links_by_parent(todolis_id_parent : int, db: Session = Depe
         .filter(models.Link.todolist_id_parent == todolis_id_parent)
         .all()
     )
-    if not child_todolists:
-        raise HTTPException(
-            status_code=status.HTTP_204_NO_CONTENT, 
-            detail=f"No child TodoLists found for parent with id {todolis_id_parent}"
-        )
-    return child_todolists
+    return child_todolists if child_todolists else []
 
 
 @router.post("/{todolist_id_parent}/add_link/{todolist_id_child}", response_model=Link)

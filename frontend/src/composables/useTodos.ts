@@ -648,17 +648,18 @@ export function useTodos() {
   };
 
   const loadTodoListLinks = async (todolist_id_parent: number) => {
-    try{
+    try {
       loading.value = true;
       error.value = null;
 
       // Récupérer la liste des liens
       currentLinks.value = await todoListsApi.getLinksbyTodolistId(todolist_id_parent);
-    } 
-    // catch (err) {
-    //   error.value = apiUtils.handleError(err);
-    //   console.error('Erreur lors du chargement des liens:', err);
-    // }
+    }
+    catch (err) {
+      error.value = apiUtils.handleError(err);
+      console.error('Erreur lors du chargement des liens:', err);
+      currentLinks.value = []; // Valeur par défaut
+    }
     finally {
       loading.value = false;
     }

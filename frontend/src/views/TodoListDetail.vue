@@ -41,17 +41,52 @@
         @toggleTodo="handleToggleTodo" @editTodo="handleEditTodo" @deleteTodo="handleDeleteTodo"
         @reorderTodos="handleReorderTodos" @categoryUpdated="handleCategoryUpdated" />
 
-      <div :class="styles.addToCourses">
-        <label for="courseSelect">Ajouter à la todolist :</label>
-        <select id="courseSelect" v-model="selectedListId">
+      <div :class="styles.addToLink">
+        <label for="linkSelect">Ajouter à la todolist :</label>
+        <select id="linkSelect" v-model="selectedListId">
           <option :value="null" disabled>Choisir une liste</option>
-          <!-- a modifier cousrLists : allLists -->
           <option v-for="list in todolists" :key="list.id" :value="list.id">
             {{ list.name }}
           </option>
         </select>
-        <button @click="handleAddToCourse" :disabled="!selectedListId">Ajouter</button>
+        <button @click="handleAddToLink" :disabled="!selectedListId">Ajouter</button>
       </div>
+
+
+
+      <!-- LIENS VERS LES TODOLISTS ASSOCIÉES -->
+      <div :class="styles.link">
+        <h2>📝 Todolist associées</h2>
+        <div v-if="currentLinks?.length === 0" :class="styles.noLinks">
+          <p>Aucun lien associé.</p>
+        </div>
+
+        <div v-else :class="styles.linksList">
+          <p>Cliquez sur une todolist pour la consulter.</p>
+          <button @click="handlePopulateFromLinks" :class="['btnCompact', 'btnSecondary', styles.addLinkButton]">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Ajouter les éléments de la liste
+          </button>
+          <div :class="styles.linksContainer">
+            <div v-for="link in currentLinks" :key="link.id" :class="[
+              styles.todolistCard,
+              link.category ? styles.todolistCardWithCategory : styles.todolistCardDefault
+            ]" :style="link.category ? {
+              '--category-color': link.category.color,
+              '--category-color-light': link.category.color + '15',
+              '--category-color-hover': link.category.color + '25'
+            } : {}" @click="goToTodoList(link.id)">
+              <div :class="styles.cardHeader">
+                <h3>{{ link.name }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       <!-- 🎯 STATISTIQUES STYLISÉES EN CARRÉS -->
       <div :class="styles.stats">
@@ -71,40 +106,8 @@
         </div>
       </div>
     </div>
-    <div :class="styles.link">
-
-      <h2>👨‍🍳 Todolist associées</h2>
-      <div v-if="currentLinks?.length === 0" :class="styles.noLinks">
-        <p>Aucun lien associé.</p>
-      </div>
-
-      <div v-else :class="styles.linksList">
-        <p>Cliquez sur une todolist pour la consulter.</p>
-        <button @click="handlePopulateFromLinks" :class="['btnCompact', 'btnSecondary', styles.addLinkButton]">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          Ajouter les éléments de la liste
-        </button>
-        <div :class="styles.linksContainer">
-          <div v-for="link in currentLinks" :key="link.id" :class="[
-            styles.todolistCard,
-            link.category ? styles.todolistCardWithCategory : styles.todolistCardDefault
-          ]" :style="link.category ? {
-            '--category-color': link.category.color,
-            '--category-color-light': link.category.color + '15',
-            '--category-color-hover': link.category.color + '25'
-          } : {}" @click="goToTodoList(link.id)">
-            <div :class="styles.cardHeader">
-              <h3>{{ link.name }}</h3>
-            </div>
-          </div>
-        </div>
-      </div>
 
 
-    </div>
   </div>
 </template>
 
@@ -233,12 +236,12 @@ const handleReorderTodos = async (todoIds: number[]) => {
   }
 };
 
-const handleAddToCourse = async () => {
+const handleAddToLink = async () => {
   if (!selectedListId.value) return;
   try {
     await addLinkBetweenTodolist(parseInt(props.id), selectedListId.value);
   } catch (err) {
-    console.error('Erreur ajout aux courses:', err);
+    console.error('Erreur de création de lien:', err);
   }
 };
 
@@ -246,7 +249,7 @@ const handlePopulateFromLinks = async () => {
   try {
     await populateFromLinks(parseInt(props.id));
   } catch (err) {
-    console.error('Erreur population courses:', err);
+    console.error('Erreur lien:', err);
   }
 };
 

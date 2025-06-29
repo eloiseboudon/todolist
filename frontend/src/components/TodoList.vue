@@ -1,5 +1,5 @@
 <template>
-  <div :class="styles.todoList">
+  <div :class="[styles.todoList,'divcontainer']">
     <!-- 🎯 NOUVEAU : En-tête compact avec boutons fins sur la même ligne -->
     <div :class="styles.todoListHeader">
       <div :class="styles.titleSection">

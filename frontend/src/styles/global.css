@@ -310,6 +310,13 @@ svg {
 }
 
 
+.divcontainer {
+  padding: var(--spacing-xl);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+}
+
+
 /* Animation de chargement */
 @keyframes spin {
   0% {

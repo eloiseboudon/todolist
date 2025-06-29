@@ -1,14 +1,5 @@
 /* TodoList.module.css - Version compacte et moderne */
 
-.todoList {
-  /* max-width: 800px; */
-  /* margin: 0 auto; */
-  padding: var(--spacing-xl);
-  /* min-width: 80%; */
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-}
-
 /* ===== EN-TÊTE COMPACT ET MODERNE ===== */
 .todoListHeader {
   background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);

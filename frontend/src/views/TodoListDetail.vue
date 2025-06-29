@@ -1,16 +1,7 @@
 <template>
   <div :class="styles.container">
-    <!-- Bouton retour stylisé -->
-    <div :class="styles.backButton">
-      <router-link to="/" :class="styles.btnBack">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        </svg>
-        Retour à l'accueil
-      </router-link>
-    </div>
+
+    <BackButton v-if="route.name && route.name !== 'Home'" />
 
     <!-- État de chargement -->
     <div v-if="loading" :class="styles.loading">
@@ -34,6 +25,7 @@
       </router-link>
     </div>
 
+
     <!-- 🎯 CONTENU PRINCIPAL AVEC LAYOUT AMÉLIORÉ -->
     <div v-if="!loading && currentTodolist" :class="styles.content">
       <!-- TodoList avec header compact et liste alignée -->
@@ -41,7 +33,7 @@
         @toggleTodo="handleToggleTodo" @editTodo="handleEditTodo" @deleteTodo="handleDeleteTodo"
         @reorderTodos="handleReorderTodos" @categoryUpdated="handleCategoryUpdated" />
 
-      <div :class="styles.addToLink">
+      <div :class="[styles.addToLink, 'divcontainer']">
         <label for="linkSelect">Ajouter à la todolist :</label>
         <select id="linkSelect" v-model="selectedListId">
           <option :value="null" disabled>Choisir une liste</option>
@@ -55,7 +47,7 @@
 
 
       <!-- LIENS VERS LES TODOLISTS ASSOCIÉES -->
-      <div :class="styles.link">
+      <div :class="[styles.link, 'divcontainer']">
         <h2>📝 Todolist associées</h2>
         <div v-if="currentLinks?.length === 0" :class="styles.noLinks">
           <p>Aucun lien associé.</p>
@@ -89,7 +81,8 @@
 
 
       <!-- 🎯 STATISTIQUES STYLISÉES EN CARRÉS -->
-      <div :class="styles.stats">
+      <div :class="[styles.stats, 'divcontainer']">
+        <!-- <div :class="styles.stats"> -->
         <div :class="styles.statCard">
           <span :class="styles.statNumber">{{ currentTodos.length }}</span>
           <span :class="styles.statLabel">Total</span>
@@ -113,13 +106,15 @@
 
 <script setup lang="ts">
 import { onMounted, watch, ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import TodoList from '@/components/TodoList.vue';
 import { useTodos } from '@/composables/useTodos';
 import type { Todo, TodoList as TodoListType } from '@/services/api';
 import styles from '@/styles/views/TodoListDetail.module.css';
+import BackButton from '@/components/BackButton.vue'
 
 const router = useRouter();
+const route = useRoute();
 
 interface Props {
   id: string;
@@ -155,6 +150,7 @@ onMounted(() => {
   loadTodoList(parseInt(props.id));
   loadTodoLists();
   loadTodoListLinks(parseInt(props.id));
+  console.log(router.currentRoute.value);
 });
 
 // Charger les données quand l'ID change

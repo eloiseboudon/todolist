@@ -78,7 +78,7 @@ const nameInput = ref<HTMLInputElement>();
 const showTooltip = ref(false);
 
 const isRecipeType = computed(() => {
-  return props.todolist?.category?.name?.toLowerCase() === 'recette';
+  return (props.todolist?.category?.name?.toLowerCase() === 'recette') || (props.todolist?.category?.name?.toLowerCase() === 'courses');
 });
 
 // Méthodes principales

@@ -48,6 +48,31 @@ class Category(CategoryBase):
     class Config:
         from_attributes = True
 
+class LinkBase(BaseModel):
+    todolist_id_parent: int = Field(..., gt=0, description="ID de la TodoList parent")
+    todolist_id_child: int = Field(..., gt=0, description="ID de la TodoList enfant")
+    
+    @model_validator(mode='after')
+    def validate_different_ids(self) -> 'LinkBase':
+        """Vérifie que parent et enfant sont différents"""
+        if self.todolist_id_parent == self.todolist_id_child:
+            raise ValueError('Une TodoList ne peut pas être liée à elle-même')
+        return self
+
+class LinkCreate(LinkBase):
+    """Schéma pour créer un lien"""
+    pass
+
+class Link(LinkBase):
+    """Modèle de réponse pour un lien"""
+    id: int = Field(..., gt=0, description="Identifiant unique du lien")
+    
+    # Relations optionnelles
+    parent_todolist: Optional[TodoListSimple] = None
+    child_todolist: Optional[TodoListSimple] = None
+    
+    class Config:
+        from_attributes = True
 
 
 class TodoBase(BaseModel):

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Text
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Text, UniqueConstraint, CheckConstraint
 from sqlalchemy.sql import func
 from app.db.session import Base
 from sqlalchemy.orm import relationship
@@ -14,6 +14,7 @@ class TodoList(Base):
     # Relations
     todos = relationship("Todo", back_populates="todolist", cascade="all, delete-orphan")
     category = relationship("Category", back_populates="todolist")
+    
     # Foreign Keys
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     
@@ -57,3 +58,25 @@ class Todo(Base):
 
     def __repr__(self):
         return f"<Todo(name='{self.name}', completed={self.completed})>"
+
+class Link(Base):
+    __tablename__ = "links"
+
+    id = Column(Integer, primary_key=True, index=True)
+    
+    # Foreign Keys
+    todolist_id_parent = Column(Integer, ForeignKey("todolist.id"), nullable=False)
+    todolist_id_child = Column(Integer, ForeignKey("todolist.id"), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # Relations
+    parent_todolist = relationship("TodoList", foreign_keys=[todolist_id_parent])
+    child_todolist = relationship("TodoList", foreign_keys=[todolist_id_child])
+    
+    # Contrainte d'unicité pour éviter les doublons
+    __table_args__ = (
+        UniqueConstraint('todolist_id_parent', 'todolist_id_child', name='unique_parent_child_link'),
+        CheckConstraint('todolist_id_parent != todolist_id_child', name='prevent_self_link')
+    )
+    def __repr__(self):
+        return f"<Link(parent_id={self.todolist_id_parent}, child_id={self.todolist_id_child})>"

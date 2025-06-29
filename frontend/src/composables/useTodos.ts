@@ -8,6 +8,7 @@ import {
 } from '../services/api';
 import { useNotifications } from './useNotifications';
 import type { ExportOptions, ExportData, ExportMetadata } from '@/types/export';
+import { addSyntheticLeadingComment } from 'typescript';
 
 
 
@@ -41,6 +42,8 @@ const currentTodos = ref<Todo[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const allTodos = ref<Todo[]>([]);
+// const linksList = ref<TodoList | null>(null);
+const currentLinks = ref<TodoList[] | null>(null);
 
 
 const loadAllTodos = async () => {
@@ -458,12 +461,10 @@ export function useTodos() {
 
       try {
         await todosApi.delete(id);
-
         // 🎯 CORRECTION : Recharger toute la TodoList pour avoir les priorités à jour
         if (currentTodolist.value) {
           await loadTodoList(currentTodolist.value.id);
         }
-
         todoDeleted(todoName);
       } catch (err) {
         const errorMessage = apiUtils.handleError(err);
@@ -485,7 +486,6 @@ export function useTodos() {
     quantity?: string,
   ) => {
     await preserveScrollPosition(async () => {
-
       loading.value = true;
       error.value = null;
 
@@ -610,6 +610,55 @@ export function useTodos() {
     }
   };
 
+  const addLinkBetweenTodolist = async (parendId: number, childId: number) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const updatedList = await todoListsApi.addLinkBetweenTodolist(parendId, childId);
+      if (currentTodolist.value?.id === parendId) {
+        await loadTodoList(parendId);
+      }
+      return updatedList;
+    } catch (err) {
+      error.value = apiUtils.handleError(err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const populateFromLinks = async (todolistId: number) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const updated = await todoListsApi.populateFromLinks(todolistId);
+      if (currentTodolist.value?.id === todolistId) {
+        await loadTodoList(todolistId);
+      }
+      return updated;
+    } catch (err) {
+      error.value = apiUtils.handleError(err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const loadTodoListLinks = async (todolist_id_parent: number) => {
+    try {
+      loading.value = true;
+      error.value = null;
+      currentLinks.value = await todoListsApi.getLinksbyTodolistId(todolist_id_parent);
+    }
+    catch (err) {
+      error.value = apiUtils.handleError(err);
+      currentLinks.value = []; // Valeur par défaut
+    }
+    finally {
+      loading.value = false;
+    }
+  };
+
   // Computed
   const sortedTodos = computed(() => {
     return [...currentTodos.value].sort((a, b) => a.priority - b.priority);
@@ -622,7 +671,6 @@ export function useTodos() {
   const pendingTodos = computed(() => {
     return currentTodos.value.filter(todo => !todo.completed);
   });
-
 
   // Fonction de nettoyage des erreurs
   const clearError = () => {
@@ -645,6 +693,7 @@ export function useTodos() {
     todolists,
     currentTodolist,
     currentTodos,
+    currentLinks,
     loading,
     error,
 
@@ -658,6 +707,7 @@ export function useTodos() {
     loadTodoList,
     createTodoList,
     deleteTodoList,
+    loadTodoListLinks,
 
     // Actions Todos
     addTodo,
@@ -665,6 +715,8 @@ export function useTodos() {
     updateTodo,
     deleteTodo,
     reorderTodos,
+    addLinkBetweenTodolist,
+    populateFromLinks,
 
     // 🎯 FONCTIONS D'EXPORT - Vérifiez qu'elles sont toutes là
     exportTodoListWithOptions,
@@ -674,7 +726,6 @@ export function useTodos() {
     // Utilitaires
     clearError,
     testConnection,
-
     //Actions de recherche
     allTodos,
     loadAllTodos

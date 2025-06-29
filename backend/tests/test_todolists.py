@@ -187,6 +187,33 @@ class TestTodoListsTodos:
     def test_get_todos_from_nonexistent_todolist(self, client):
         """Test récupération des todos d'une TodoList qui n'existe pas"""
         response = client.get("/todolists/999/todos")
-        
+
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json()["detail"] == "Todolist not found"
+
+
+class TestPopulateFromLinks:
+    def test_populate_from_links(self, client, db_session):
+        course_cat = models.Category(name="courses", color="#000000", icon="cart")
+        recipe_cat = models.Category(name="recette", color="#000000", icon="book")
+        db_session.add_all([course_cat, recipe_cat])
+        db_session.commit()
+
+        course_list = models.TodoList(name="Courses", category_id=course_cat.id)
+        recipe_list = models.TodoList(name="Recipe", category_id=recipe_cat.id)
+        db_session.add_all([course_list, recipe_list])
+        db_session.commit()
+
+        ingredient = models.Todo(name="Tomate", completed=False, priority=1, quantity="2", todolist_id=recipe_list.id)
+        db_session.add(ingredient)
+        db_session.commit()
+
+        link = models.Link(todolist_id_parent=course_list.id, todolist_id_child=recipe_list.id)
+        db_session.add(link)
+        db_session.commit()
+
+        response = client.post(f"/todolists/{course_list.id}/populate_from_links")
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert len(data["todos"]) == 1
+        assert data["todos"][0]["name"] == "Tomate"

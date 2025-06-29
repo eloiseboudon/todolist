@@ -78,3 +78,5 @@ class Link(Base):
         UniqueConstraint('todolist_id_parent', 'todolist_id_child', name='unique_parent_child_link'),
         CheckConstraint('todolist_id_parent != todolist_id_child', name='prevent_self_link')
     )
+    def __repr__(self):
+        return f"<Link(parent_id={self.todolist_id_parent}, child_id={self.todolist_id_child})>"

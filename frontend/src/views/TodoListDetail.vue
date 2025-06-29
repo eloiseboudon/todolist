@@ -147,16 +147,19 @@ const {
   clearError
 } = useTodos();
 
-// Charger les données au montage et quand l'ID change
+// Charger les données au montage 
 onMounted(() => {
   loadTodoList(parseInt(props.id));
   loadTodoLists();
   loadTodoListLinks(parseInt(props.id));
 });
 
+// Charger les données quand l'ID change
 watch(() => props.id, (newId) => {
   loadTodoList(parseInt(newId));
+  loadTodoListLinks(parseInt(newId));
 });
+
 const goToTodoList = (id: number) => {
   router.push(`/todolist/${id}`);
 };

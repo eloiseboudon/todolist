@@ -1,0 +1,14 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tealGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d9488;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f766e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Fond carré arrondi -->
+  <rect x="8" y="8" width="112" height="112" rx="28" ry="28" fill="url(#tealGradient)" />
+  
+  <!-- Checkmark moderne -->
+  <path d="M45 64 L56 75 L83 48" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+</svg>

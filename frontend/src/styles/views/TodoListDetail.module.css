@@ -100,7 +100,6 @@
   transform: translateY(-1px);
 }
 
-
 .linksContainer {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -111,6 +110,7 @@
 .addLinkButton {
   margin-bottom: var(--spacing-md);
 }
+
 
 .addToLink select {
   padding: var(--spacing-sm);

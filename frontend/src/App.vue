@@ -5,7 +5,7 @@
       <nav :class="styles.nav">
         <div class="app-logo">
           <router-link to="/" :class="styles.logo">
-            <div class="mini-logo">T</div>
+            <div class="mini-logo"></div>
             <span class="app-title">TaskFlow</span>
           </router-link>
         </div>

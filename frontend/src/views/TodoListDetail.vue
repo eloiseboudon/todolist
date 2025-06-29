@@ -2,14 +2,7 @@
   <div :class="styles.container">
     <!-- Bouton retour stylisé -->
     <div :class="styles.backButton">
-      <router-link to="/" :class="styles.btnBack">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        </svg>
-        Retour à l'accueil
-      </router-link>
+      <BackButton />
     </div>
 
     <!-- État de chargement -->
@@ -29,17 +22,22 @@
     <div v-if="!loading && !currentTodolist && !error" :class="styles.notFound">
       <h2>TodoList non trouvée</h2>
       <p>La TodoList avec l'ID {{ id }} n'existe pas.</p>
-      <router-link to="/" :class="styles.btnBack">
-        ← Retour à l'accueil
-      </router-link>
+      <BackButton />
     </div>
 
     <!-- 🎯 CONTENU PRINCIPAL AVEC LAYOUT AMÉLIORÉ -->
     <div v-if="!loading && currentTodolist" :class="styles.content">
       <!-- TodoList avec header compact et liste alignée -->
-      <TodoList :todolist="currentTodolist" :todos="sortedTodos" @addTodo="handleAddTodoWithPriority"
-        @toggleTodo="handleToggleTodo" @editTodo="handleEditTodo" @deleteTodo="handleDeleteTodo"
-        @reorderTodos="handleReorderTodos" @categoryUpdated="handleCategoryUpdated" />
+      <TodoList
+        :todolist="currentTodolist"
+        :todos="sortedTodos"
+        @addTodo="handleAddTodoWithPriority"
+        @toggleTodo="handleToggleTodo"
+        @editTodo="handleEditTodo"
+        @deleteTodo="handleDeleteTodo"
+        @reorderTodos="handleReorderTodos"
+        @categoryUpdated="handleCategoryUpdated"
+      />
 
       <div :class="styles.addToLink">
         <label for="linkSelect">Ajouter à la todolist :</label>
@@ -52,8 +50,6 @@
         <button @click="handleAddToLink" :disabled="!selectedListId">Ajouter</button>
       </div>
 
-
-
       <!-- LIENS VERS LES TODOLISTS ASSOCIÉES -->
       <div :class="styles.link">
         <h2>📝 Todolist associées</h2>
@@ -63,22 +59,41 @@
 
         <div v-else :class="styles.linksList">
           <p>Cliquez sur une todolist pour la consulter.</p>
-          <button @click="handlePopulateFromLinks" :class="['btnCompact', 'btnSecondary', styles.addLinkButton]">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="size-6">
+          <button
+            @click="handlePopulateFromLinks"
+            :class="['btnCompact', 'btnSecondary', styles.addLinkButton]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
+            >
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
             Ajouter les éléments de la liste
           </button>
           <div :class="styles.linksContainer">
-            <div v-for="link in currentLinks" :key="link.id" :class="[
-              styles.todolistCard,
-              link.category ? styles.todolistCardWithCategory : styles.todolistCardDefault
-            ]" :style="link.category ? {
-              '--category-color': link.category.color,
-              '--category-color-light': link.category.color + '15',
-              '--category-color-hover': link.category.color + '25'
-            } : {}" @click="goToTodoList(link.id)">
+            <div
+              v-for="link in currentLinks"
+              :key="link.id"
+              :class="[
+                styles.todolistCard,
+                link.category ? styles.todolistCardWithCategory : styles.todolistCardDefault,
+              ]"
+              :style="
+                link.category
+                  ? {
+                      '--category-color': link.category.color,
+                      '--category-color-light': link.category.color + '15',
+                      '--category-color-hover': link.category.color + '25',
+                    }
+                  : {}
+              "
+              @click="goToTodoList(link.id)"
+            >
               <div :class="styles.cardHeader">
                 <h3>{{ link.name }}</h3>
               </div>
@@ -86,7 +101,6 @@
           </div>
         </div>
       </div>
-
 
       <!-- 🎯 STATISTIQUES STYLISÉES EN CARRÉS -->
       <div :class="styles.stats">
@@ -106,26 +120,25 @@
         </div>
       </div>
     </div>
-
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import TodoList from '@/components/TodoList.vue';
-import { useTodos } from '@/composables/useTodos';
-import type { Todo, TodoList as TodoListType } from '@/services/api';
-import styles from '@/styles/views/TodoListDetail.module.css';
+import { onMounted, watch, ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import TodoList from '@/components/TodoList.vue'
+import BackButton from '@/components/BackButton.vue'
+import { useTodos } from '@/composables/useTodos'
+import type { Todo, TodoList as TodoListType } from '@/services/api'
+import styles from '@/styles/views/TodoListDetail.module.css'
 
-const router = useRouter();
+const router = useRouter()
 
 interface Props {
-  id: string;
+  id: string
 }
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
 const {
   todolists,
@@ -147,114 +160,112 @@ const {
   reorderTodos,
   addLinkBetweenTodolist,
   populateFromLinks,
-  clearError
-} = useTodos();
+  clearError,
+} = useTodos()
 
-// Charger les données au montage 
+// Charger les données au montage
 onMounted(() => {
-  loadTodoList(parseInt(props.id));
-  loadTodoLists();
-  loadTodoListLinks(parseInt(props.id));
-});
+  loadTodoList(parseInt(props.id))
+  loadTodoLists()
+  loadTodoListLinks(parseInt(props.id))
+})
 
 // Charger les données quand l'ID change
-watch(() => props.id, (newId) => {
-  loadTodoList(parseInt(newId));
-  loadTodoListLinks(parseInt(newId));
-});
+watch(
+  () => props.id,
+  (newId) => {
+    loadTodoList(parseInt(newId))
+    loadTodoListLinks(parseInt(newId))
+  },
+)
 
 const goToTodoList = (id: number) => {
-  router.push(`/todolist/${id}`);
-};
+  router.push(`/todolist/${id}`)
+}
 
-const selectedListId = ref<number | null>(null);
+const selectedListId = ref<number | null>(null)
 
-
-const handleAddTodoWithPriority = async (
-  name: string,
-  priority?: number,
-  quantity?: string,
-) => {
+const handleAddTodoWithPriority = async (name: string, priority?: number, quantity?: string) => {
   try {
-    await addTodo(parseInt(props.id), name, priority, quantity);
+    await addTodo(parseInt(props.id), name, priority, quantity)
   } catch (err) {
-    console.error('Erreur ajout todo avec priorité - Détail complet:', err);
+    console.error('Erreur ajout todo avec priorité - Détail complet:', err)
     if (err instanceof Error) {
-      console.error('Message:', err.message);
-      console.error('Stack:', err.stack);
+      console.error('Message:', err.message)
+      console.error('Stack:', err.stack)
     }
-    console.error('Erreur complète:', JSON.stringify(err, null, 2));
+    console.error('Erreur complète:', JSON.stringify(err, null, 2))
   }
-};
+}
 
 const handleToggleTodo = async (id: number) => {
-  const todo = currentTodos.value.find(t => t.id === id);
+  const todo = currentTodos.value.find((t) => t.id === id)
   if (todo) {
     try {
-      await toggleTodo(todo);
+      await toggleTodo(todo)
     } catch (err) {
-      console.error('Erreur toggle todo:', err);
+      console.error('Erreur toggle todo:', err)
     }
   }
-};
+}
 
 // 🎯 CORRIGÉ : Fonction handleEditTodo avec todolist_id
 const handleEditTodo = async (todo: Todo) => {
-  const newName = prompt('Nouveau nom:', todo.name);
+  const newName = prompt('Nouveau nom:', todo.name)
   if (newName && newName.trim() !== todo.name) {
     try {
       await updateTodo(todo.id, {
         name: newName.trim(),
         completed: todo.completed,
         priority: todo.priority,
-        todolist_id: parseInt(props.id) // 🎯 Ajout du todolist_id requis
-      });
+        todolist_id: parseInt(props.id), // 🎯 Ajout du todolist_id requis
+      })
     } catch (err) {
-      console.error('Erreur édition todo:', err);
+      console.error('Erreur édition todo:', err)
     }
   }
-};
+}
 
 // NOUVEAU : Gestionnaire de mise à jour de catégorie
 const handleCategoryUpdated = (updatedTodolist: TodoListType) => {
-  currentTodolist.value = updatedTodolist; // Direct et simple
-};
+  currentTodolist.value = updatedTodolist // Direct et simple
+}
 
 const handleDeleteTodo = async (id: number) => {
   try {
-    await deleteTodo(id);
+    await deleteTodo(id)
   } catch (err) {
-    console.error('🎯 [TodoListDetail] Erreur suppression todo:', err);
+    console.error('🎯 [TodoListDetail] Erreur suppression todo:', err)
   }
-};
+}
 
 const handleReorderTodos = async (todoIds: number[]) => {
   try {
-    await reorderTodos(parseInt(props.id), todoIds);
+    await reorderTodos(parseInt(props.id), todoIds)
   } catch (err) {
-    console.error('Erreur réorganisation todos:', err);
+    console.error('Erreur réorganisation todos:', err)
   }
-};
+}
 
 const handleAddToLink = async () => {
-  if (!selectedListId.value) return;
+  if (!selectedListId.value) return
   try {
-    await addLinkBetweenTodolist(parseInt(props.id), selectedListId.value);
+    await addLinkBetweenTodolist(parseInt(props.id), selectedListId.value)
   } catch (err) {
-    console.error('Erreur de création de lien:', err);
+    console.error('Erreur de création de lien:', err)
   }
-};
+}
 
 const handlePopulateFromLinks = async () => {
   try {
-    await populateFromLinks(parseInt(props.id));
+    await populateFromLinks(parseInt(props.id))
   } catch (err) {
-    console.error('Erreur lien:', err);
+    console.error('Erreur lien:', err)
   }
-};
+}
 
 const retry = () => {
-  clearError();
-  loadTodoList(parseInt(props.id));
-};
+  clearError()
+  loadTodoList(parseInt(props.id))
+}
 </script>

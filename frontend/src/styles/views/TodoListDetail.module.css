@@ -11,35 +11,6 @@
   margin-bottom: var(--spacing-lg);
 }
 
-.btnBack {
-  color: var(--text-secondary) !important;
-  font-weight: var(--font-weight-medium);
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  text-decoration: none;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-lg);
-  border: 1px solid transparent;
-}
-
-.btnBack svg {
-  width: 18px;
-  height: 18px;
-  transition: transform var(--transition-fast);
-}
-
-.btnBack:hover {
-  color: var(--primary-color) !important;
-  background: var(--primary-light);
-  border-color: var(--primary-color);
-}
-
-.btnBack:hover svg {
-  transform: translateX(-2px);
-}
-
 /* ===== CONTENU PRINCIPAL ===== */
 .content {
   display: flex;
@@ -76,9 +47,11 @@
 
 .error {
   border-color: var(--error-color);
-  background: linear-gradient(135deg,
-      color-mix(in srgb, var(--error-color) 5%, var(--bg-card)) 0%,
-      var(--bg-card) 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--error-color) 5%, var(--bg-card)) 0%,
+    var(--bg-card) 100%
+  );
 }
 
 .btnDismiss,
@@ -142,7 +115,7 @@
   transition: all var(--transition-fast);
   font-weight: var(--font-weight-normal);
   min-width: 200px;
-  margin : 0 var(--spacing-sm) 0;
+  margin: 0 var(--spacing-sm) 0;
 }
 
 .addToLink button {
@@ -172,9 +145,11 @@
 }
 
 .todolistCardWithCategory {
-  background: linear-gradient(135deg,
-      color-mix(in srgb, var(--category-color) 8%, var(--bg-primary)) 0%,
-      color-mix(in srgb, var(--category-color) 12%, var(--bg-primary)) 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--category-color) 8%, var(--bg-primary)) 0%,
+    color-mix(in srgb, var(--category-color) 12%, var(--bg-primary)) 100%
+  );
   border: 1px solid color-mix(in srgb, var(--category-color) 30%, var(--border-color));
 }
 
@@ -219,9 +194,11 @@
 /* 🎯 Variantes colorées des cartes stats */
 .statCard:nth-child(1) {
   border-color: var(--primary-color);
-  background: linear-gradient(135deg,
-      color-mix(in srgb, var(--primary-color) 8%, var(--bg-primary)) 0%,
-      color-mix(in srgb, var(--primary-color) 12%, var(--bg-card)) 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary-color) 8%, var(--bg-primary)) 0%,
+    color-mix(in srgb, var(--primary-color) 12%, var(--bg-card)) 100%
+  );
 }
 
 .statCard:nth-child(1):hover {
@@ -235,9 +212,11 @@
 
 .statCard:nth-child(2) {
   border-color: var(--success-color);
-  background: linear-gradient(135deg,
-      color-mix(in srgb, var(--success-color) 8%, var(--bg-primary)) 0%,
-      color-mix(in srgb, var(--success-color) 12%, var(--bg-card)) 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--success-color) 8%, var(--bg-primary)) 0%,
+    color-mix(in srgb, var(--success-color) 12%, var(--bg-card)) 100%
+  );
 }
 
 .statCard:nth-child(2):hover {
@@ -251,9 +230,11 @@
 
 .statCard:nth-child(3) {
   border-color: var(--warning-color);
-  background: linear-gradient(135deg,
-      color-mix(in srgb, var(--warning-color) 8%, var(--bg-primary)) 0%,
-      color-mix(in srgb, var(--warning-color) 12%, var(--bg-card)) 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--warning-color) 8%, var(--bg-primary)) 0%,
+    color-mix(in srgb, var(--warning-color) 12%, var(--bg-card)) 100%
+  );
 }
 
 .statCard:nth-child(3):hover {
@@ -273,10 +254,12 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.2) 50%,
-      transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
   transition: left 0.5s ease;
 }
 
@@ -424,17 +407,14 @@
 
 /* ===== SUPPORT MOUVEMENT RÉDUIT ===== */
 @media (prefers-reduced-motion: reduce) {
-
   .statCard,
   .stats,
-  .btnBack,
   .spinner {
     animation: none;
     transition: none;
   }
 
-  .statCard:hover,
-  .btnBack:hover {
+  .statCard:hover {
     transform: none;
   }
 

@@ -1,0 +1,23 @@
+.backBtn {
+    background: var(--secondary-color);
+    color: white;
+    border: 1px solid var(--secondary-hover);
+    color: var(--text-white);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin: var(--spacing-sm) 0;
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.backBtn:hover {
+    background: var(--secondary-hover);
+}
+
+.backBtn svg {
+    width: 18px;
+}
